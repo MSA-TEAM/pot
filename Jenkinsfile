@@ -9,7 +9,7 @@ node {
     }
 
     stage('Build') {
-        sh './gradlew build dockerPush'
+        sh './gradlew build'
         archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
     }
 
