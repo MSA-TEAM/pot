@@ -20,7 +20,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: "com.palantir.docker"
 
 jar {
-    baseName = 'svm'
+    baseName = 'vol'
     version =  '1.0.0-RELEASE'
 }
 
