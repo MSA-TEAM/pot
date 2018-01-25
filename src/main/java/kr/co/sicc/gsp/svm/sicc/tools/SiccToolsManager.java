@@ -20,7 +20,7 @@ import kr.co.sicc.gsp.svm.gms.common.tools.ToolsServiceImpl;
 import kr.co.sicc.gsp.svm.sicc.common.SiccMessageUtil;
 import kr.co.sicc.gsp.svm.sicc.common.vo.BaseVO;
 import kr.co.sicc.gsp.svm.sicc.exception.SiccException;
-import net.minidev.json.JSONObject;
+import org.json.simple.JSONObject;
 
 @Service
 public class SiccToolsManager {
