@@ -11,7 +11,7 @@ import kr.co.sicc.gsp.svm.sicc.common.vo.SiccGenericVO;
  * com.gms.svm.vo
  * SVMVolVO.java
  * Description 	:
- * ???šŒ ??›ë´‰ì‚¬ ì§??›?„œ VO
+ * ëŒ€íšŒ ìì›ë´‰ì‚¬ ì§€ì›ì„œ VO
  * History     	:
  * </pre>
  *
@@ -288,7 +288,6 @@ public class SVMVolVO extends SiccGenericVO {
 //	private String pre_id_number1 = "";
 //	private String pre_id_number2 = "";
 
-	// ï§â‘¸ì¤?, è¹‚ë‹¿?¬ï¿½ï¿?
 	private String local_nm = ""; 		// local_nm1 + local_nm2
 	private String eng_nm = ""; 		// family_nm + given_nm
 	private String ctry_nm = ""; 		// ctry_cd => nm
@@ -314,10 +313,10 @@ public class SVMVolVO extends SiccGenericVO {
 
 
 	private String link_page = "";   
-    // ? „?™”ë©´ì ‘ ì¡°íšŒì¡°ê±´
+    // ì „í™”ë©´ì ‘ ì¡°íšŒì¡°ê±´
     private String search_regi_no_to = "";
 	private String search_comp_yn = ""; 
-    // ?†Œ?–‘êµìœ¡ ì¡°íšŒì¡°ê±´  
+    // ì†Œì–‘êµìœ¡ ì¡°íšŒì¡°ê±´  
 	private String search_educ_no = ""; 
 	private String search_alloc_yn = ""; 
 	private String search_educ_fg = ""; 

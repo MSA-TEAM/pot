@@ -104,7 +104,6 @@ public class SiccAuthenticationSuccessHandler implements AuthenticationSuccessHa
     }
 	
 //	private void createNewCookie(HttpServletRequest request, HttpServletResponse response) {
-//		// ?¸ì¦? ?„¸?…˜?„ ê°?? ¸?? ?ƒˆë¡œìš´ ì¿ í‚¤ ?ƒ?„± (https)
 //		Cookie ck = new Cookie("JSESSIONID", request.getSession().getId());
 //		ck.setPath(request.getContextPath());
 //		response.addCookie(ck);
@@ -141,7 +140,7 @@ public class SiccAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	
 	/**
 	 * URL redirect
-	 * ?ˆœ?„œ?Š” 
+	 * ìˆœì„œëŠ” 
 	 * targetUrlParameter -> Session -> REFERER -> default
 	 * @param request
 	 * @param response
@@ -174,7 +173,7 @@ public class SiccAuthenticationSuccessHandler implements AuthenticationSuccessHa
 			
 			return result;
 		}
-// Session URL ?‚¬?š©?•ˆ?•¨.		
+// Session URL ì‚¬ìš©ì•ˆí•¨.				
 //		if(savedRequest != null){
 //			result = 2;
 //			return result;

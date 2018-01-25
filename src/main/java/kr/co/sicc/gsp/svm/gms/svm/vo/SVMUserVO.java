@@ -80,7 +80,7 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	private String submit_yn = "";
 	private String save_tab_cd = "";
 	
-	// ?•”?Έ?™”
+	// μ•”νΈν™”
 	private String newPassword = "";
 	private String saltBase64 = "";
 	private String salt = "";

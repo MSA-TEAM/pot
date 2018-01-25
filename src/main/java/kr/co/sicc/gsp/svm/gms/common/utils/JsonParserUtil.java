@@ -3,9 +3,10 @@ package kr.co.sicc.gsp.svm.gms.common.utils;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import kr.co.sicc.gsp.svm.sicc.exception.SiccException;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
 
 public class JsonParserUtil { 
 
