@@ -7,14 +7,28 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+      	classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.17.2"
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: "com.palantir.docker"
 
-group = 'kr.co.sicc.gsp'
+jar {
+    baseName = 'cfg'
+    version =  '1.0.0-RELEASE'
+}
+
+group = 'docker.gsp.sicc.co.kr:5000'
+
+docker {
+	name "${project.group}/${jar.baseName}"
+	files jar.archivePath
+	buildArgs(['JAR_FILE': "${jar.archiveName}"])
+}
+
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
