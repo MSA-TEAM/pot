@@ -21,6 +21,12 @@ spring:
     url: jdbc:sqlserver://203.255.241.196:1433;DatabaseName=AG2018GMS
     username: siccgms    
     password: siccgms
+#  datasource:
+#    type: org.springframework.jdbc.datasource.SimpleDriverDataSource
+#    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#    url: jdbc:postgresql://localhost:5432/postgres
+#    username: postgres    
+#    password: admin    
     
 # LOGGING
 #logging.config: classpath:logback/logback-spring.xml  # resource/logback-spring.xml에 위치하여 위치 자동 인식 
