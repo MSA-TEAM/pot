@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sicc.menu.MenuDAO">
+	<select id="list" resultType="hashmap" > 
+	SELECT *
+	  FROM (
+	<choose>
+		<when test="username != 'anonymousUser'">
+		 SELECT A.SYSTEM_CD,
+				dbo.FN_GMS_CODE_NM('SYSTEM_CD', A.SYSTEM_CD, #{lang}) AS SYSTEM_NM,
+				A.MENU_ORD,
+				A.SUB_ORD,
+				A.MENU_LVL,
+				A.CONTROL_URL,
+				dbo.FN_WEB_MENU_NM(A.MENU_ID, A.MENU_NM, #{lang}) AS MENU_NM,
+				A.USE_YN,
+				A.RPT_YN,
+				A.MOBILE_YN,
+				A.POPUP_YN,
+				A.DISABLE_YN,
+				CASE WHEN (SELECT COUNT(*) FROM WEBPROGRAMM S WHERE S.SYSTEM_CD = #{system} AND S.MENU_LVL > 0 AND S.MENU_ORD = A.MENU_ORD) > 0 THEN 'Y' ELSE 'N' END AS SUB_MENU_YN
+		   FROM WEBPROGRAMM A
+		  WHERE A.MENU_ID IN (SELECT C.MENU_ID
+								FROM WEBUSERGROUPD A,
+									 WEBGROUPM B,
+									 WEBGROUPPROGD C
+							   WHERE A.GROUP_ID = B.GROUP_ID
+								 AND B.GROUP_ID = C.GROUP_ID
+								 AND USER_ID = #{username})
+		   AND A.SYSTEM_CD = #{system}
+		   AND A.USE_YN = 'Y'
+		   AND A.MENU_LVL = 0
+         UNION ALL
+	     SELECT A.SYSTEM_CD,
+				dbo.FN_GMS_CODE_NM('SYSTEM_CD', A.SYSTEM_CD, #{lang}) AS SYSTEM_NM,
+				A.MENU_ORD,
+				A.SUB_ORD,
+				A.MENU_LVL,
+				A.CONTROL_URL,
+				dbo.FN_WEB_MENU_NM(A.MENU_ID, A.MENU_NM, #{lang}) AS MENU_NM,
+				A.USE_YN,
+				A.RPT_YN,
+				A.MOBILE_YN,
+				A.POPUP_YN,
+				DISABLE_YN,
+				CASE WHEN (SELECT COUNT(*) FROM WEBPROGRAMM S WHERE S.SYSTEM_CD = #{system} AND S.MENU_LVL > 0 AND S.MENU_ORD = A.MENU_ORD) > 0 THEN 'Y' ELSE 'N' END AS SUB_MENU_YN
+		   FROM WEBPROGRAMM A
+		  WHERE A.MENU_ID IN (SELECT C.MENU_ID
+								FROM WEBUSERGROUPD A,
+									 WEBGROUPM B,
+									 WEBGROUPPROGD C
+							   WHERE A.GROUP_ID = B.GROUP_ID
+								 AND B.GROUP_ID = C.GROUP_ID
+								 AND USER_ID = #{username})
+		   AND A.SYSTEM_CD = #{system}
+		   AND A.USE_YN = 'Y'
+		   AND A.MENU_LVL > 0
+		</when>
+		<otherwise>
+		SELECT A.SYSTEM_CD,
+               dbo.FN_GMS_CODE_NM('SYSTEM_CD', A.SYSTEM_CD, #{lang}) AS SYSTEM_NM,
+               A.MENU_ORD,
+               A.SUB_ORD,
+               A.MENU_LVL,
+               A.CONTROL_URL,
+               dbo.FN_WEB_MENU_NM(A.MENU_ID, A.MENU_NM, #{lang}) AS MENU_NM,
+               A.USE_YN,
+               A.RPT_YN,
+               A.MOBILE_YN,
+               A.POPUP_YN,
+               DISABLE_YN,
+               '1' as AUTHORITY,
+               CASE WHEN (SELECT COUNT(*) FROM WEBPROGRAMM S WHERE S.SYSTEM_CD = #{system} AND S.MENU_LVL > 0 AND S.MENU_ORD = A.MENU_ORD) > 0 THEN 'Y' ELSE 'N' END AS SUB_MENU_YN
+          FROM WEBPROGRAMM A
+         WHERE A.AJAX_YN = 'N'
+	       AND A.USE_YN = 'Y'
+           AND A.MENU_LVL = 0
+           AND A.SYSTEM_CD = #{system}
+        UNION ALL
+	    SELECT A.SYSTEM_CD,
+               dbo.FN_GMS_CODE_NM('SYSTEM_CD', A.SYSTEM_CD, #{lang}) AS SYSTEM_NM,
+               A.MENU_ORD,
+               A.SUB_ORD,
+               A.MENU_LVL,
+               A.CONTROL_URL,
+               dbo.FN_WEB_MENU_NM(A.MENU_ID, A.MENU_NM, #{lang}) AS MENU_NM,
+               A.USE_YN,
+               A.RPT_YN,
+               A.MOBILE_YN,
+               A.POPUP_YN,
+               a.DISABLE_YN,
+               '1' as AUTHORITY,
+               CASE WHEN (SELECT COUNT(*) FROM WEBPROGRAMM S WHERE S.SYSTEM_CD = #{system} AND S.MENU_LVL > 0 AND S.MENU_ORD = A.MENU_ORD) > 0 THEN 'Y' ELSE 'N' END AS SUB_MENU_YN
+          FROM WEBPROGRAMM A
+         WHERE A.AJAX_YN = 'N'
+	       AND A.USE_YN = 'Y'
+	       AND A.MENU_LVL > 0
+	       AND A.SYSTEM_CD = #{system}
+		</otherwise>
+	</choose>
+	       ) A
+	 ORDER BY MENU_ORD, SUB_ORD
+  	</select>
+  	
+	<select id="modernList" resultType="hashmap" >  
+    SELECT A.SYSTEM_CD,
+           dbo.FN_GMS_CODE_NM('SYSTEM_CD', A.SYSTEM_CD, #{lang}) AS SYSTEM_NM,
+           MENU_ORD,
+           SUB_ORD,
+           CONTROL_URL,
+           dbo.FN_MENU_NM(MENU_ID, MENU_NM, #{lang}) AS MENU_NM,
+           USE_YN,
+           RPT_YN,
+           POPUP_YN,
+           DISABLE_YN,
+           B.ACCESS_PRIV,
+           B.ACTION_PRIV_CD as AUTHORITY
+      FROM SYSPROGRAMM A,
+           SYSUSERPOWERD B
+     WHERE A.ACCESS_PRIV = B.ACCESS_PRIV
+       AND A.SYSTEM_CD = B.SYSTEM_CD
+       AND B.USER_ID = #{username}
+       AND A.AJAX_YN = 'N'
+       AND A.MOBILE_YN = 'Y' 
+	   AND A.USE_YN = 'Y'
+       AND A.SUB_ORD > 0
+	 ORDER BY SYSTEM_CD, MENU_ORD, SUB_ORD
+  	</select>
+</mapper>

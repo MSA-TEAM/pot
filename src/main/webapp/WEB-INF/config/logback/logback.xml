@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+		<Pattern>
+		    %d{yyyy-MM-dd HH:mm:ss} %-5level [%C:%L] | %msg%n
+		</Pattern>
+		</layout>
+	</appender>
+	
+	<property name="SYSTEM_CD" value="sys" />
+	<property name="LOG_DIR" value="c:/sicc/logs" />
+	<property name="LOG_FILE_NAME" value="${LOG_DIR}/${SYSTEM_CD}_%d{yyyy-MM-dd}.log" />
+	
+	<appender name="FILEOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE_NAME}</fileNamePattern>
+			<fileBasedFileNamingAndTriggerPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+<!-- 				<maxFileSize>100MB</maxFileSize> -->
+			</fileBasedFileNamingAndTriggerPolicy>
+		</rollingPolicy>
+<!-- 		<maxHistory>30</maxHistory> -->
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%C:%L] | %msg%n</pattern>
+		</encoder>
+	</appender>
+    
+	<appender name="SQL_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+		<Pattern>
+		    %d{yyyy-MM-dd HH:mm:ss} %n%msg%n
+		</Pattern>
+		</layout>
+	</appender>
+	
+	<logger name="org.springframework.web" level="info" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="org.springframework.beans" level="debug" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="org.springframework.context" level="debug" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="org.springframework.core" level="info" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="org.springframework.aop" level="info" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="org.springframework.security" level="error" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="com.gms" level="debug" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+	
+	<logger name="com.sicc" level="debug" additivity="false">
+		<appender-ref ref="STDOUT"/>
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+    
+	<logger level="error">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILEOUT"/>
+	</logger>
+</configuration>

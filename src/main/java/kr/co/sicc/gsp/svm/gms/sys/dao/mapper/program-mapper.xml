@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.sys.dao.SYSProgramDAO">
+  <select id="list" resultType="hashmap" >
+  	<![CDATA[
+     SELECT ROW_NUMBER() OVER(ORDER BY MENU_ORD, SUB_ORD) RN,
+            MENU_ID, 
+			SYSTEM_CD, 
+			MENU_LVL, 
+			MENU_ORD,
+			SUB_ORD,
+			MENU_NM,
+			CONTROL_URL, 
+			USE_YN,
+			AJAX_YN,
+			MOBILE_YN,
+			POPUP_YN
+       FROM WEBPROGRAMM  
+      WHERE 1=1
+      ]]>
+      <if test="search_system_cd != ''">
+      	AND SYSTEM_CD = #{search_system_cd}
+      </if>
+  </select>
+  <select id="edit" resultType="hashmap">
+  <![CDATA[
+	SELECT A.MENU_ID 
+		   ,A.SYSTEM_CD 
+		   ,A.MENU_LVL 
+		   ,A.MENU_ORD 
+	       ,A.SUB_ORD
+		   ,A.MENU_NM
+		   ,A.CONTROL_URL
+		   ,A.USE_YN
+		   ,A.AJAX_YN
+		   ,A.MOBILE_YN
+		   ,A.POPUP_YN
+		   ,A.DISABLE_YN
+		   ,B.MENU_NM AS MENU_NM1
+	  FROM 
+	  (SELECT * FROM WEBPROGRAMM WHERE MENU_ID = #{0}) A 
+	  LEFT OUTER JOIN
+	  (SELECT * FROM WEBPROGLANGNMD WHERE MENU_ID = #{0} AND UPPER(MENU_LANG) = 'EN') B 
+	    ON A.MENU_ID = #{0}	
+  ]]>
+  </select>
+  <update id="update" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+	UPDATE WEBPROGRAMM 
+   	   SET  MENU_NM = #{menu_nm}
+           ,CONTROL_URL = #{control_url}
+           ,USE_YN = CASE WHEN ISNULL(#{use_yn}, '') = '' THEN 'N' ELSE #{use_yn} END
+           ,POPUP_YN = CASE WHEN ISNULL(#{popup_yn}, '') = '' THEN 'N' ELSE #{popup_yn} END
+           ,DISABLE_YN = CASE WHEN ISNULL(#{disable_yn}, '') = '' THEN 'N' ELSE #{disable_yn} END
+           ,UDT_ID = #{username}
+	       ,UDT_IP = #{user_ip}
+	       ,UDT_DATE = getdate()           
+     WHERE MENU_ID = #{p_menu_id}
+  ]]>
+  </update>
+  <update id="update_order_0">
+  <![CDATA[
+	UPDATE WEBPROGRAMM
+	   SET ORD_TEMP = #{0}
+	 WHERE SYSTEM_CD = #{2} 
+	   AND MENU_ORD IN (SELECT MENU_ORD FROM WEBPROGRAMM WHERE MENU_ID = #{1})
+  ]]>
+  </update>
+  <update id="update_order_0_main">
+  <![CDATA[
+	UPDATE WEBPROGRAMM
+	   SET MENU_ORD = ORD_TEMP
+	 WHERE SYSTEM_CD = #{0}
+  ]]>
+  </update>
+  <update id="update_order_1">
+  <![CDATA[
+	UPDATE WEBPROGRAMM
+	   SET SUB_ORD = #{0}
+	 WHERE MENU_ID = #{1}
+  ]]>
+  </update>
+  <select id="insert_menu_id" resultType="string">
+  <![CDATA[
+	SELECT #{system_cd} + 
+	       REPLICATE('0',7-LEN(MAX(SUBSTRING(MENU_ID,4,10))+1)) + 
+	       CAST(MAX(SUBSTRING(MENU_ID,4,10))+1 AS VARCHAR) AS MENU_ID   
+	  FROM WEBPROGRAMM  
+	 WHERE SYSTEM_CD = #{system_cd}
+  ]]>
+  </select>
+  <insert id="insert" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+	INSERT 
+	  INTO WEBPROGRAMM 
+	       (  MENU_ID 
+	         ,SYSTEM_CD
+	         ,MENU_LVL 
+	         ,MENU_ORD 
+	         ,SUB_ORD 
+	         ,ORD_TEMP 
+	         ,MENU_NM 
+	         ,CONTROL_URL 
+	         ,USE_YN
+	         ,POPUP_YN
+	         ,DISABLE_YN
+	         ,CRT_ID   
+			 ,CRT_IP   
+			 ,CRT_DATE   
+			 ,UDT_ID     
+			 ,UDT_IP  
+			 ,UDT_DATE 
+	       ) 
+	VALUES (  
+			  #{p_menu_id} 
+	         ,#{system_cd} 
+	         ,#{menu_lvl}
+	         ]]>
+	         <choose>
+	         	<when test="menu_lvl != 0">
+	         		,#{menu_ord}
+	         	</when>
+	         	<otherwise>
+	         		, (SELECT MAX(MENU_ORD)+1 FROM WEBPROGRAMM WHERE SYSTEM_CD = #{system_cd})
+	         	</otherwise>
+	         </choose>
+	         <![CDATA[
+	         ,'0' 
+	         ,'0'
+	         ,#{menu_nm} 
+	         ,#{control_url}
+	         ,CASE WHEN ISNULL(#{use_yn}, '') = '' THEN 'N' ELSE #{use_yn} END
+	         ,CASE WHEN ISNULL(#{popup_yn}, '') = '' THEN 'N' ELSE #{popup_yn} END
+	         ,CASE WHEN ISNULL(#{disable_yn}, '') = '' THEN 'N' ELSE #{disable_yn} END
+	         ,#{username}   
+			 ,#{user_ip}  
+			 ,getdate()
+			 ,#{username}    
+			 ,#{user_ip}    
+			 ,getdate() 
+	       )
+  ]]>
+  </insert>
+  <insert id="insert_granted_group" parameterType="com.gms.sys.vo.SYSProgramVO">
+	  <foreach collection="hd_granted_group_id" item="data" index="index" open="" separator="" close="">
+	  	INSERT
+	  	  INTO WEBGROUPPROGD
+	  	  	   (GROUP_ID,
+	  	  	    MENU_ID,
+	  	  	    CRT_DATE,
+	  	  	    CRT_ID,
+	  	  	    CRT_IP)
+	  	VALUES (#{data},
+	  			#{p_menu_id},
+	  			GETDATE(),
+	  			#{username},
+	  			#{user_ip})
+	  </foreach>
+  </insert>
+  <insert id="delete_granted_group" parameterType="com.gms.sys.vo.SYSProgramVO">
+  	DELETE
+  	  FROM WEBGROUPPROGD
+  	 WHERE MENU_ID = #{p_menu_id}
+  </insert>
+  <delete id="delete_0" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+    DELETE 
+      FROM WEBPROGRAMM
+     WHERE SYSTEM_CD = #{search_system_cd}
+       AND MENU_ORD = #{p_menu_ord}
+  ]]>
+  </delete>
+  <delete id="delete" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+    DELETE 
+      FROM WEBPROGRAMM
+     WHERE SYSTEM_CD = #{search_system_cd}
+  ]]>
+  	<choose>
+  		<when test="p_menu_lvl == 1">
+  	   AND MENU_ID = #{p_menu_id}  
+  		</when>
+  		<otherwise>
+  	   AND MENU_ORD = #{p_menu_ord}
+  		</otherwise>
+  	</choose>
+  </delete>
+  <insert id="delete_attached_group_lv0" parameterType="com.gms.sys.vo.SYSProgramVO">
+  	DELETE
+  	  FROM WEBGROUPPROGD
+  	 WHERE MENU_ID IN (SELECT MENU_ID FROM WEBPROGRAMM WHERE SYSTEM_CD = #{search_system_cd} AND MENU_ORD = #{p_menu_ord})
+  </insert>
+  
+  <select id="check_duplication_control" resultType="int" >
+  <![CDATA[ 
+    SELECT COUNT(*) AS CNT
+	  FROM WEBPROGRAMM
+	 WHERE 1=1 
+	   AND CONTROL_URL = #{control_url}
+	   AND SYSTEM_CD <> #{system_cd}
+	 ]]>
+  </select>
+  <select id="check_duplication" resultType="int" >
+  <![CDATA[ 
+    SELECT COUNT(*) AS CNT
+	  FROM WEBPROGRAMM
+	 WHERE 1=1 
+	   AND CONTROL_URL = #{control_url}
+	   AND MENU_ID <> #{p_menu_id}
+	 ]]>
+  </select>
+  <select id="langlist" resultType="hashmap" >
+  	<![CDATA[
+     SELECT ROW_NUMBER() OVER(ORDER BY B.CODE_IDX1) RN 
+     		,A.MENU_ID AS MENU_ID
+			,A.MENU_LANG AS MENU_LANG
+			,DBO.FN_GMS_CODE_NM_IDX('LANG_CD', A.MENU_LANG, #{lang}, 2) AS MENU_LANG_NM
+			,A.MENU_NM AS MENU_NM  
+       FROM WEBPROGLANGNMD A
+ INNER JOIN TCOCODEM B
+         ON A.MENU_LANG = B.CODE_IDX2 
+      WHERE 1=1
+        AND MENU_ID = #{p_menu_id}
+        AND MENU_LANG <> 'en'
+      ]]>
+  </select>
+  <select id="check_lang" resultType="int" >
+  	<![CDATA[
+     SELECT COUNT(*)
+       FROM WEBPROGLANGNMD 
+      WHERE 1=1
+        AND MENU_ID = #{p_menu_id}
+        AND MENU_LANG = 'en'
+      ]]>
+  </select>
+  <insert id="lang_insert" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+	INSERT 
+	  INTO WEBPROGLANGNMD 
+	       (  MENU_ID 
+	         ,MENU_LANG
+	         ,MENU_NM
+	         ,USE_YN 
+	         ,CRT_ID   
+			 ,CRT_IP   
+			 ,CRT_DATE   
+			 ,UDT_ID     
+			 ,UDT_IP  
+			 ,UDT_DATE  
+	       ) 
+	VALUES (  
+			  #{p_menu_id} 
+	         ,#{menu_lang} 
+	         ,#{menu_nm1} 
+	         ,'Y'
+	         ,#{username}   
+			 ,#{user_ip}  
+			 ,getdate()
+			 ,#{username}    
+			 ,#{user_ip}    
+			 ,getdate() 
+	       )
+  ]]>
+  </insert>
+  <update id="lang_update" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+	UPDATE WEBPROGLANGNMD 
+   	   SET  MENU_NM = #{menu_nm1}          
+           ,MENU_LANG = #{menu_lang}
+           ,UDT_ID = #{username}
+	       ,UDT_IP = #{user_ip}
+	       ,UDT_DATE = getdate()           
+     WHERE MENU_ID = #{p_menu_id}
+       AND MENU_LANG = #{p_menu_lang}
+  ]]>
+  </update>
+  <delete id="lang_delete">
+  <![CDATA[
+    DELETE 
+      FROM WEBPROGLANGNMD
+     WHERE MENU_ID = #{0}
+       AND MENU_LANG = #{1}
+  ]]>
+  </delete>
+  <insert id="en_insert" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+	INSERT 
+	  INTO WEBPROGLANGNMD 
+	       (  MENU_ID 
+	         ,MENU_LANG
+	         ,MENU_NM
+	         ,USE_YN 
+	         ,CRT_ID   
+			 ,CRT_IP   
+			 ,CRT_DATE   
+			 ,UDT_ID     
+			 ,UDT_IP  
+			 ,UDT_DATE  
+	       ) 
+	VALUES (  
+			  #{p_menu_id} 
+	         ,'en' 
+	         ,#{menu_nm_en} 
+	         ,'Y'
+	         ,#{username}   
+			 ,#{user_ip}  
+			 ,getdate()
+			 ,#{username}    
+			 ,#{user_ip}    
+			 ,getdate() 
+	       )
+  ]]>
+  </insert>
+  <update id="en_update" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+	UPDATE WEBPROGLANGNMD 
+   	   SET  MENU_NM = #{menu_nm_en}          
+           ,UDT_ID = #{username}
+	       ,UDT_IP = #{user_ip}
+	       ,UDT_DATE = getdate()           
+     WHERE MENU_ID = #{p_menu_id}
+      AND  MENU_LANG = 'en'
+  ]]>
+  </update>
+  <select id="check_en_language" resultType="int" >
+  <![CDATA[ 
+    SELECT COUNT(*) AS CNT
+       FROM WEBPROGLANGNMD  
+      WHERE 1=1
+        AND MENU_ID = #{p_menu_id}
+        AND MENU_LANG = 'en'
+	 ]]>
+  </select>
+  <select id="check_duplication_language" resultType="int" >
+  <![CDATA[ 
+    SELECT COUNT(*) AS CNT
+       FROM WEBPROGLANGNMD  
+      WHERE 1=1
+        AND MENU_ID = #{p_menu_id}
+        AND MENU_LANG = #{menu_lang} 
+	 ]]>
+  </select>
+  <select id="delete_list" resultType="string" >
+  <![CDATA[ 
+    SELECT MENU_ID
+      FROM WEBPROGRAMM
+     WHERE SYSTEM_CD = #{search_system_cd}
+       AND MENU_ORD = #{menu_ord}
+	 ]]>
+  </select>
+  <delete id="delete_lang" parameterType="com.gms.sys.vo.SYSProgramVO">
+  <![CDATA[
+    DELETE 
+      FROM WEBPROGLANGNMD
+     WHERE MENU_ID = #{menu_id}
+  ]]>
+  </delete>
+  <delete id="delete_lang_0">
+  <![CDATA[
+    DELETE 
+      FROM WEBPROGLANGNMD
+     WHERE MENU_ID = #{0}
+  ]]>
+  </delete>
+</mapper>

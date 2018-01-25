@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.sys.dao.SYSToolsDAO">
+  <select id="tco" resultType="hashmap" >
+    <![CDATA[  
+    SELECT MAJOR_CD, MINOR_CD, CODE_NM1, S_CODE_NM1 AS CODE_NM2, CODE_NM3, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, SPORT_CD
+	  FROM TCOCODEM
+	 WHERE MAJOR_CD = (SELECT MINOR_CD
+	 					 FROM TCOCODEM
+	 					WHERE CODE_IDX1 = #{code_find})
+	   AND HIDE_YN != 'Y'	  
+	]]>
+	<if test="etc_cond1 != null and etc_cond1 != ''">
+   	  ${etc_cond1}		
+	</if>
+	<if test="order != null and order != ''">
+   	  ORDER BY ${order}		
+	</if>
+  </select>
+  <select id="order_list" resultType="hashmap" >
+    <![CDATA[  
+	SELECT '' as MAJOR_CD, 
+       	   MENU_ID as MINOR_CD, 
+           MENU_NM + ' :: '+CONTROL_ID+'?cmd='+CONTROL_KIND AS CODE_NM2,
+           MENU_ORD,
+           SUB_ORD
+      FROM SYSPROGRAMM 
+     WHERE SYSTEM_CD = #{code_idx1}
+       AND MENU_LVL = #{code_idx2} 
+     ]]>
+     <if test="code_idx2 != 0">
+     		AND MENU_ORD = ${code_idx3}
+	 </if>
+	 <if test="code_idx4 == 1">
+     		UNION ALL SELECT '' as MAJOR_CD, 
+        	'0' as MINOR_CD, 
+        	'- NEW LEVEL' +'${code_idx2}'+ '-' AS CODE_NM2,
+        	'999' AS MENU_ORD,
+        	'999' AS SUB_ORD   
+	 </if>
+     <![CDATA[
+		ORDER BY MENU_ORD, MENU_LVL, CASE WHEN MENU_LVL = '0' THEN ORD_TEMP ELSE SUB_ORD END
+     ]]>
+  </select>
+  <select id="accesspriv_list" resultType="hashmap" >
+    <![CDATA[  
+	SELECT ACCESS_PRIV as MAJOR_CD, ACCESS_PRIV as MINOR_CD, SYSTEM_CD, ACCESS_NM AS CODE_NM2
+	  FROM SYSACCESSPRIVM
+	 WHERE 1=1
+     ]]>
+     <if test="code_idx2 != null and code_idx2 != ''">
+        AND SYSTEM_CD = '${code_idx2}'
+	 </if>
+	 <![CDATA[  
+	 ORDER BY SYSTEM_CD, ACCESS_PRIV
+     ]]>
+  </select>
+  <select id="group_list" resultType="hashmap">
+  	<![CDATA[
+  	SELECT 	GROUP_ID AS MINOR_CD
+  			, GROUP_ID + ' (' + GROUP_NM + ')' AS CODE_NM1
+  			, GROUP_ID + ' (' + GROUP_NM + ')' AS CODE_NM2
+  			, SYSTEM_CD AS MAJOR_CD
+  			, SYSTEM_CD AS CODE_IDX1
+  	  FROM 	WEBGROUPM
+  	 WHERE 1=1
+  	]]>
+  	<if test="etc_cond1 != '' and etc_cond2 != '' and etc_cond3 != ''">
+  	   AND SYSTEM_CD = #{etc_cond1} AND GROUP_ID NOT IN (SELECT GROUP_ID FROM WEBUSERGROUPD WHERE SYSTEM_CD = #{etc_cond2} AND USER_ID = #{etc_cond3} )
+  	</if>
+  	<if test="etc_cond1 == '' and etc_cond2 != '' and etc_cond3 != ''">
+  	   AND GROUP_ID NOT IN (SELECT GROUP_ID FROM WEBUSERGROUPD WHERE SYSTEM_CD = #{etc_cond2} AND USER_ID = #{etc_cond3} )
+  	</if>
+  	<if test="etc_cond1 != '' and etc_cond2 == ''">
+  	   AND SYSTEM_CD = #{etc_cond1}
+  	</if>
+  	<if test="order != '' ">
+  		ORDER BY ${order}
+  	</if>
+  </select>
+  
+  <select id="granted_group_list" resultType="hashmap">
+  	<![CDATA[
+  	SELECT A.GROUP_ID AS MINOR_CD,
+		   B.SYSTEM_CD AS MAJOR_CD,
+		   B.SYSTEM_CD AS CODE_IDX1,
+		   A.GROUP_ID+' ('+GROUP_NM+')' AS CODE_NM1,
+	       A.GROUP_ID+' ('+GROUP_NM+')' AS CODE_NM2
+	  FROM WEBUSERGROUPD A,
+		   WEBGROUPM B
+	 WHERE A.GROUP_ID = B.GROUP_ID
+  	]]>
+  	<if test="etc_cond1 != '' and etc_cond2 != '' and etc_cond3 != ''">
+		AND A.SYSTEM_CD = #{etc_cond2}
+		AND A.USER_ID =#{etc_cond3}
+		AND B.SYSTEM_CD = #{etc_cond1}
+  	</if>
+  	<if test="etc_cond1 == '' and etc_cond2 != '' and etc_cond3 != ''">
+  	  	AND A.SYSTEM_CD = #{etc_cond2} AND A.USER_ID = #{etc_cond3} 
+  	</if>
+  	<if test="order != '' ">
+  		ORDER BY ${order}
+  	</if>
+  </select>
+  
+  <select id="program_group_list" resultType="hashmap">
+  	<![CDATA[
+  	SELECT 	GROUP_ID AS MINOR_CD
+  			, GROUP_ID + ' (' + GROUP_NM + ')' AS CODE_NM1
+  			, GROUP_ID + ' (' + GROUP_NM + ')' AS CODE_NM2
+  			, SYSTEM_CD AS MAJOR_CD
+  			, SYSTEM_CD AS CODE_IDX1
+  	  FROM 	WEBGROUPM
+  	 WHERE 1=1
+  	]]>
+  	<if test="etc_cond1 != ''">
+  	   AND GROUP_ID NOT IN (SELECT GROUP_ID FROM WEBGROUPPROGD WHERE MENU_ID = #{etc_cond1})
+  	</if>
+  	<if test="order != '' ">
+  		ORDER BY ${order}
+  	</if>
+  </select>
+  <select id="granted_program_group_list" resultType="hashmap">
+  	<![CDATA[
+  	SELECT A.GROUP_ID AS MINOR_CD,
+		   B.SYSTEM_CD AS MAJOR_CD,
+		   B.SYSTEM_CD AS CODE_IDX1,
+		   A.GROUP_ID+' ('+B.GROUP_NM+')' AS CODE_NM1,
+	       A.GROUP_ID+' ('+B.GROUP_NM+')' AS CODE_NM2
+	  FROM WEBGROUPPROGD A,
+		   WEBGROUPM B
+	 WHERE A.GROUP_ID = B.GROUP_ID
+  	]]>
+  	<if test="etc_cond1 != '' ">
+  	   AND A.MENU_ID = #{etc_cond1}
+  	</if>
+  	<if test="order != '' ">
+  		ORDER BY ${order}
+  	</if>
+  </select>
+  <select id="chk_user_id" resultType="int">
+  	<![CDATA[
+  	SELECT CAST(COUNT(*) AS VARCHAR) AS CNT 
+  	  FROM SYSUSERM 
+  	 WHERE 1=1
+  	]]>
+  	<if test="etc_cond1 != null and etc_cond1 != '' ">
+  		${etc_cond1}
+  	</if>
+  	<if test="order != null and order != '' ">
+  		ORDER BY ${order}
+  	</if>
+  </select>
+  <select id="menu_list" resultType="hashmap">
+  	<![CDATA[
+  	SELECT MENU_ID AS MINOR_CD,
+		   MENU_NM+'('+CONTROL_URL+')' AS CODE_NM1,
+		   MENU_NM+'('+CONTROL_URL+')' AS CODE_NM2
+	  FROM WEBPROGRAMM
+	 WHERE 1=1
+	 ]]>
+	 <choose>
+	 	<when test="etc_cond1 != 0">
+	   AND SYSTEM_CD = #{etc_cond2}
+	   AND MENU_ORD IN (SELECT MENU_ORD FROM WEBPROGRAMM WHERE MENU_ID = #{etc_cond3})
+	   AND MENU_LVL = '1'
+	 	</when>
+	 	<otherwise>
+	   AND SYSTEM_CD = #{etc_cond2}
+	   AND MENU_LVL = '0'
+	 	</otherwise>
+	 </choose>
+    <![CDATA[
+	 ORDER BY MENU_ORD, SUB_ORD
+	]]>
+  </select>
+</mapper>

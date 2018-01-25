@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.common.photo.PhotoDAO">
+	<select id="read" resultType="com.gms.common.photo.PhotoVO">
+	<![CDATA[
+		SELECT AD_NO,
+		       PHOTO,
+		       THUMNAIL,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT
+		  FROM GMSPHOTOM
+		 WHERE AD_NO = #{0}
+	]]>
+	</select>
+    
+    <insert id="insert" parameterType="com.gms.common.photo.PhotoVO">
+    <![CDATA[
+        INSERT INTO GMSPHOTOM (
+               AD_NO,
+		       PHOTO,
+		       THUMNAIL,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT
+        ) VALUES (
+               #{ad_no},
+               #{photo},
+               #{thumbnail},
+               #{username},
+               #{user_ip},   
+               getdate(),
+               #{username},  
+               #{user_ip},  
+               getdate()
+        )
+    ]]>
+    </insert>
+    
+    <delete id="delete">
+    <![CDATA[
+        DELETE 
+          FROM GMSPHOTOM
+         WHERE AD_NO = #{0}
+    ]]>
+    </delete>
+    
+    <select id="readPassport" resultType="com.gms.common.photo.PhotoVO">
+	<![CDATA[
+		SELECT AD_NO,
+		       PHOTO,
+		       THUMNAIL,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT
+		  FROM GMSPASSPORTPHOTOM
+		 WHERE AD_NO = #{0}
+	]]>
+	</select>
+    
+    <insert id="insertPassport" parameterType="com.gms.common.photo.PhotoVO">
+    <![CDATA[
+        INSERT INTO GMSPASSPORTPHOTOM (
+               AD_NO,
+		       PHOTO,
+		       THUMNAIL,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT  
+        ) VALUES (
+               #{ad_no},
+               #{photo},
+               #{thumbnail},
+               #{username},
+               #{user_ip},   
+               getdate(),
+               #{username},  
+               #{user_ip},  
+               getdate()
+        )
+    ]]>
+    </insert>
+    
+    <delete id="deletePassport">
+    <![CDATA[
+        DELETE 
+          FROM GMSPASSPORTPHOTOM
+         WHERE AD_NO = #{0}
+    ]]>
+    </delete>
+</mapper>

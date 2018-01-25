@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.svm.dao.SVMUserDAO">
+<!-- 	<select id="list" resultType="hashmap"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		SELECT 	U.EMAIL, dbo.FN_DECT(U.USER_NM) AS USER_NM, U.SYSTEM_CD, U.USE_YN -->
+<!-- 				, dbo.FN_SYS_GROUP_NM(U.EMAIL, 4) AS GROUP_ID  -->
+<!-- 				, U.RN -->
+<!-- 	  	FROM 	 -->
+<!-- 	  	( -->
+<!-- 			SELECT 	ROW_NUMBER() OVER( -->
+<!-- 	]]>	 -->
+<!-- 			<if test="search_order != null and search_order != '' "> -->
+<!-- 				ORDER BY ${search_order} -->
+<!-- 			</if> -->
+<!-- 			<if test="search_order == null or search_order == '' "> -->
+<!-- 				ORDER BY EMAIL -->
+<!-- 			</if> -->
+<!-- 	<![CDATA[		 -->
+<!-- 					) AS RN -->
+<!-- 					, A.* -->
+<!-- 		  	FROM 	SVMUSERLOGINM A -->
+<!-- 		 	WHERE 	1=1 -->
+<!-- 	]]> -->
+<!-- 		<if test="search_system_cd != null and search_system_cd != '' "> -->
+<!-- 			AND SYSTEM_CD = #{search_system_cd} -->
+<!-- 		</if> -->
+<!-- 		<if test="search_use_yn != null and search_use_yn != '' "> -->
+<!-- 			AND USE_YN = #{search_use_yn} -->
+<!-- 		</if> -->
+<!-- 		<if test="search_EMAIL != null and search_EMAIL != '' "> -->
+<!-- 			AND EMAIL LIKE '%${search_EMAIL}%' -->
+<!-- 		</if> -->
+<!-- 		<if test="search_user_group != null and search_user_group != '' "> -->
+<!-- 			AND EMAILX5 = #{search_user_group} -->
+<!-- 		</if> -->
+<!-- 		<if test="search_user_nm != null and search_user_nm != '' "> -->
+<!-- 			AND USER_NM LIKE '%${search_user_nm}%'  -->
+<!-- 		</if> -->
+<!-- 		<if test="search_group_id != null and search_group_id != '' "> -->
+<!-- 			AND #{search_group_id} IN (SELECT VAL FROM dbo.FN_SPLIT_TBL(ASSIGN_GROUP_ID)) -->
+<!-- 		</if> -->
+<!-- 	<![CDATA[ -->
+<!-- 		) U -->
+<!-- 		WHERE	RN >= ${page_st} -->
+<!-- 		  AND	RN <  ${page_ed} -->
+<!-- 	]]> -->
+<!-- 	</select> -->
+	
+<!-- 	<select id="total_cnt" resultType="int"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		SELECT 	COUNT(EMAIL) AS TOTAL_CNT -->
+<!-- 		  FROM 	SVMUSERLOGINM -->
+<!-- 		 WHERE 	1=1 -->
+<!-- 	]]> -->
+<!-- 		<if test="search_system_cd != null and search_system_cd != '' "> -->
+<!-- 			AND SYSTEM_CD = #{search_system_cd} -->
+<!-- 		</if> -->
+<!-- 		<if test="search_use_yn != null and search_use_yn != '' "> -->
+<!-- 			AND USE_YN = #{search_use_yn} -->
+<!-- 		</if> -->
+<!-- 		<if test="search_EMAIL != null and search_EMAIL != '' "> -->
+<!-- 			AND EMAIL LIKE '%${search_EMAIL}%' -->
+<!-- 		</if> -->
+<!-- 		<if test="search_user_group != null and search_user_group != '' "> -->
+<!-- 			AND EMAILX5 = #{search_user_group} -->
+<!-- 		</if> -->
+<!-- 		<if test="search_user_nm != null and search_user_nm != '' "> -->
+<!-- 			AND USER_NM LIKE '%${search_user_nm}%'  -->
+<!-- 		</if> -->
+<!-- 		<if test="search_group_id != null and search_group_id != '' "> -->
+<!-- 			AND #{search_group_id} IN (SELECT VAL FROM dbo.FN_SPLIT_TBL(ASSIGN_GROUP_ID)) -->
+<!-- 		</if> -->
+<!-- 	</select> -->
+	
+	<select id="edit" resultType="hashmap">
+	<![CDATA[
+		SELECT 	EMAIL, dbo.FN_DECT(USER_NM) AS USER_NM, SYSTEM_CD, dbo.FN_SYS_GROUP_NM(EMAIL, 1) AS PRE_GROUP_ID
+				, ASSIGN_GROUP_ID
+				, USE_YN
+				, LOGIN_FAIL_CNT
+		FROM 	SVMUSERLOGINM
+		WHERE 	EMAIL = #{0}
+	]]>
+	</select>	
+	
+	<insert id="insert" parameterType="com.gms.svm.vo.SVMUserVO">
+		INSERT INTO SVMUSERLOGINM (
+			  EMAIL
+			, EMAIL_DUMMY
+			, EMAIL_AUTH_YN
+			, PASSWORD
+			, CHANGE_PWD_YN
+			, BIRTH_DATE
+			, USE_YN
+ 			, PWD_SALT
+ 			, SUBMIT_YN
+ 			, SAVE_TAB_CD 
+ 			, ASSIGN_GROUP_ID
+ 			,CRT_DT
+            ,CRT_IP
+            
+		) VALUES (
+			#{email}
+			, #{email_dummy}
+			, #{email_auth_yn}
+			, #{newPassword}
+			, #{change_pwd_yn}
+			, #{birth_date}
+			, #{use_yn}
+ 			, #{saltBase64}
+ 			, #{submit_yn}
+ 			, #{save_tab_cd}
+ 			, #{assign_group_id}
+ 			, GETDATE()  
+ 			<choose>
+			   <when test="user_ip == null">
+				   ,isNull('','')
+			   </when>
+			   <otherwise> 
+				   ,isNull(#{user_ip},'')
+			   </otherwise>
+		   </choose>
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.gms.svm.vo.SVMUserVO">
+	<![CDATA[
+		UPDATE 	SVMUSERLOGINM
+		   	
+	]]>
+		   	<set>
+		   		<if test="submit_yn != null and submit_yn != '' ">
+		   		  SUBMIT_YN = #{submit_yn},
+		   		</if>
+		   		<if test="use_yn != null and use_yn != '' ">
+		   		  USE_YN = #{use_yn},
+		   		</if>
+			   	<if test="email_auth_yn != null and email_auth_yn != '' "> 	
+			   		  EMAIL_AUTH_YN = #{email_auth_yn},
+			    </if>
+			   	<if test="change_pwd_yn != null and change_pwd_yn != '' "> 	
+			   		  CHANGE_PWD_YN = #{change_pwd_yn},
+			    </if>
+			   	<if test="birth_date != null and birth_date != '' "> 	
+			   		  BIRTH_DATE = #{birth_date},
+			    </if>
+			    <if test="save_tab_cd != null and save_tab_cd != '' ">
+			   		  SAVE_TAB_CD = #{save_tab_cd},
+			    </if>
+				<if test="newPassword != null and newPassword != '' ">
+					  PASSWORD = #{newPassword},
+					  PWD_SALT = #{saltBase64}, 
+				</if>
+				UDT_DT = GETDATE(),
+				<choose>
+			   <when test="user_ip == null">
+				   UDT_IP = isNull('','')
+			   </when>
+			   <otherwise>
+				   UDT_IP = isNull(#{user_ip},'')
+			   </otherwise>
+			   </choose>
+			   <if test='"Y".equals(submit_yn)'>
+				   ,SUBMIT_DT = GETDATE()
+			   </if>
+			</set>
+	<![CDATA[		
+		 WHERE	EMAIL = #{email}	
+	]]>
+	</update>
+	
+	<delete id="delete">
+	<![CDATA[
+		DELETE 	FROM SVMUSERLOGINM
+		 WHERE 	EMAIL = #{0}
+	]]>	
+	</delete>
+	
+	<select id="chk_email" resultType="int">
+		<![CDATA[
+			SELECT COUNT(*)
+			FROM SVMUSERLOGINM
+			WHERE EMAIL = #{0}
+		]]>
+	</select>
+	
+	<select id="chk_email_auth" resultType="String">
+		<![CDATA[
+			SELECT EMAIL_AUTH_YN
+			FROM SVMUSERLOGINM
+			WHERE EMAIL = #{0}
+		]]>
+	</select>
+<!-- 	<insert id="insert_group" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		INSERT INTO WEBUSERGROUPD ( -->
+<!-- 			EMAIL -->
+<!-- 			, SYSTEM_CD -->
+<!-- 			, GROUP_ID -->
+<!-- 			, CRT_DATE -->
+<!-- 			, CRT_ID -->
+<!-- 			, CRT_IP -->
+<!-- 		) VALUES ( -->
+<!-- 			#{EMAIL} -->
+<!-- 			, #{system_cd} -->
+<!-- 			, #{group_id} -->
+<!-- 			, GETDATE() -->
+<!-- 			, #{username} -->
+<!-- 			, #{user_ip} -->
+<!-- 		)	 -->
+<!-- 	]]> -->
+<!-- 	</insert> -->
+	
+<!-- 	<delete id="delete_group"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		DELETE -->
+<!-- 		  FROM 	WEBUSERGROUPD -->
+<!-- 		 WHERE 	EMAIL = #{0} -->
+<!-- 		     AND SYSTEM_CD =  #{1} -->
+<!-- 	]]> -->
+<!-- 	</delete> -->
+	
+<!-- 	<delete id="delete_group_priv"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		DELETE  -->
+<!-- 		  FROM 	WEBUSERPOWERD -->
+<!-- 		 WHERE 	EMAIL = #{0} -->
+<!-- 		   AND   SYSTEM_CD = #{1} -->
+<!-- 		   AND 	ACCESS_PRIV IN (SELECT ACCESS_PRIV FROM WEBGROUPPOWERD WHERE GROUP_ID IN (SELECT GROUP_ID FROM WEBUSERGROUPD WHERE EMAIL = #{0} AND SYSTEM_CD = {1})) -->
+<!-- 	]]>	 -->
+<!-- 	</delete> -->
+	
+<!-- 	<select id="list_priv" resultType="hashmap"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		SELECT 	A.SYSTEM_CD -->
+<!-- 				, dbo.FN_GMS_CODE('SYSTEM_CD', A.SYSTEM_CD, '3') AS SYSTEM_NM  -->
+<!-- 				, A.ACCESS_PRIV -->
+<!-- 				, (SELECT ACCESS_NM FROM WEBACCESSPRIVM WHERE ACCESS_PRIV = A.ACCESS_PRIV)  AS ACCESS_NM  -->
+<!-- 				, B.AUTHORITY  -->
+<!-- 		  FROM 	WEBACCESSPRIVM A  -->
+<!-- 		  LEFT OUTER JOIN WEBGROUPPOWERD B  -->
+<!-- 			ON A.ACCESS_PRIV = B.ACCESS_PRIV  -->
+<!-- 				AND B.GROUP_ID = #{group_id} -->
+<!-- 		 WHERE  A.SYSTEM_CD IN (#{priv_system_cd})  -->
+<!--   		   AND 	A.ACCESS_PRIV NOT IN (SELECT ACCESS_PRIV FROM WEBUSERPOWERD WHERE EMAIL = #{p_EMAIL} ) -->
+<!-- 		 ORDER  -->
+<!-- 		 	BY A.SYSTEM_CD, A.ACCESS_PRIV -->
+<!-- 	]]> -->
+<!-- 	</select> -->
+	
+<!-- 	<insert id="insert_priv" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		INSERT INTO WEBUSERPOWERD ( -->
+<!-- 			EMAIL -->
+<!-- 			, ACCESS_PRIV -->
+<!-- 			, SYSTEM_CD -->
+<!-- 			, AUTHORITY -->
+<!-- 			, CRT_DT -->
+<!-- 			, CRT_ID -->
+<!-- 			, CRT_IP -->
+<!-- 		)  -->
+<!-- 		SELECT 	#{EMAIL} -->
+<!-- 				, ACCESS_PRIV -->
+<!-- 				, SYSTEM_CD -->
+<!-- 				, MAX(AUTHORITY) -->
+<!-- 				, GETDATE() -->
+<!-- 				, #{username} -->
+<!-- 				, #{user_ip} -->
+<!-- 		  FROM	WEBGROUPPOWERD -->
+<!-- 		 WHERE	GROUP_ID IN ( SELECT GROUP_ID FROM SYSUSERGROUPD WHERE EMAIL = #{EMAIL} ) -->
+<!-- 		 GROUP  BY 	ACCESS_PRIV, SYSTEM_CD -->
+<!-- 		 ORDER  BY 	SYSTEM_CD, ACCESS_PRIV -->
+<!-- 	]]> -->
+<!-- 	</insert> -->
+	
+<!-- 	<delete id="delete_priv"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		DELETE  -->
+<!-- 		  FROM 	WEBUSERPOWERD -->
+<!-- 		 WHERE 	EMAIL = #{0} -->
+<!-- 	]]>	 -->
+<!-- 	</delete> -->
+	
+<!-- 	<select id="list_granted_priv" resultType="hashmap"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		SELECT 	A.SYSTEM_CD -->
+<!-- 				, dbo.FN_GMS_CODE('SYSTEM_CD', A.SYSTEM_CD, '3') AS SYSTEM_NM  -->
+<!-- 				, A.ACCESS_PRIV -->
+<!-- 				, (SELECT ACCESS_NM FROM WEBACCESSPRIVM WHERE ACCESS_PRIV = A.ACCESS_PRIV)  AS ACCESS_NM -->
+<!-- 				, B.AUTHORITY -->
+<!-- 		  FROM 	WEBACCESSPRIVM A, WEBUSERPOWERD B -->
+<!-- 		 WHERE 	A.ACCESS_PRIV = B.ACCESS_PRIV  -->
+<!-- 		   AND 	B.EMAIL = #{p_EMAIL} -->
+<!-- 		 ORDER 	 -->
+<!-- 		 	BY 	A.SYSTEM_CD, A.ACCESS_PRIV  -->
+<!-- 	]]> -->
+<!-- 	</select> -->
+	
+<!-- 	<insert id="insert_auth" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		INSERT INTO WEBUSERPOWERD ( -->
+<!-- 			EMAIL -->
+<!-- 			, ACCESS_PRIV -->
+<!-- 			, SYSTEM_CD -->
+<!-- 			, AUTHORITY -->
+<!-- 			, CRT_DT -->
+<!-- 			, CRT_ID -->
+<!-- 			, CRT_IP -->
+<!-- 		) VALUES ( -->
+<!-- 			#{p_EMAIL} -->
+<!-- 			, #{access_priv} -->
+<!-- 			, #{priv_system_cd} -->
+<!-- 			, #{authority} -->
+<!-- 			, GETDATE() -->
+<!-- 			, #{username} -->
+<!-- 			, #{user_ip} -->
+<!-- 		) -->
+<!-- 	]]> -->
+<!-- 	</insert> -->
+	
+<!-- 	<insert id="insert_history" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		INSERT INTO SVMUSERLOGINMODIFIEDM ( -->
+<!-- 			EMAIL -->
+<!-- 			, SEQ -->
+<!-- 			, USER_NM -->
+<!-- 			, SYSTEM_CD -->
+<!-- 			, STATUS -->
+<!-- 			, MODIFY_CONTENTS  -->
+<!-- 			, CRT_DT -->
+<!-- 			, CRT_ID -->
+<!-- 			, CRT_IP -->
+<!-- 		) VALUES ( -->
+<!-- 			#{p_EMAIL} -->
+<!-- 			, (SELECT ISNULL(MAX(SEQ), 0)+1 FROM SVMUSERLOGINMODIFIEDM WHERE EMAIL = #{EMAIL}) -->
+<!-- 			, #{user_nm} -->
+<!-- 			, #{system_cd} -->
+<!-- 			, #{status} -->
+<!-- 			, #{revision_history} -->
+<!-- 			, GETDATE() -->
+<!-- 			, #{username} -->
+<!-- 			, #{user_ip} -->
+<!-- 		) -->
+<!-- 	]]> -->
+<!-- 	</insert> -->
+</mapper>

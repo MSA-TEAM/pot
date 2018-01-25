@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.svm.dao.SVMLoginDAO">
+
+  	<select id="auth" resultType="com.gms.svm.vo.SVMUserVO" >
+    SELECT EMAIL, PASSWORD, (CASE WHEN USE_YN = 'Y' THEN 1 ELSE 0 END) AS ENABLED, PWD_SALT AS SALT
+   	  FROM SVMUSERLOGINM
+   	 WHERE EMAIL = #{email}
+  	</select>
+  	
+  	<select id="authList" resultType="com.gms.common.login.Role">    
+	 SELECT UG.ASSIGN_GROUP_ID AS NAME,
+		   UG.ASSIGN_GROUP_ID AS permission,
+		   '' as accesspriv
+	  FROM SVMUSERLOGINM UG
+	  JOIN WEBGROUPM WG
+
+	  ON UG.ASSIGN_GROUP_ID = WG.GROUP_ID
+	  AND WG.SYSTEM_CD = 'SVM'
+	 WHERE EMAIL = #{email}
+	 ORDER BY UG.ASSIGN_GROUP_ID
+  	</select>
+  	
+  	<select id="userInfo"  resultType="com.gms.svm.vo.SVMUserVO">
+    <![CDATA[
+    SELECT 
+    	   EMAIL AS NAME
+    	  ,PASSWORD
+	      ,dbo.FN_DECT(EMAIL) AS EMAIL
+	      ,(CASE WHEN USE_YN = 'Y' THEN 1 ELSE 0 END) AS ENABLED
+		  ,USE_YN
+		  --,BIRTH_DATE
+		   ,case when isNull(BIRTH_DATE, '') <> '' then STUFF(STUFF(CAST(dbo.FN_FDATE(BIRTH_DATE, 'DDMMYYYY') AS NCHAR(8)), 3, 0, '/'), 6, 0, '/') END AS BIRTH_DATE
+		  ,SUBMIT_YN
+		  ,SAVE_TAB_CD
+		  ,CHANGE_PWD_YN
+		  ,EMAIL_AUTH_YN
+	      ,PWD_SALT AS SALT
+	      ,isNull((SELECT AD_NO FROM SVMVOLUNTEERM A WHERE A.EMAIL = #{email}),'') AS AD_NO
+   	  FROM SVMUSERLOGINM
+   	  ]]>
+   	 WHERE EMAIL = #{email}
+  	</select>
+  	
+<!-- 	<update id="loginSuccess" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 	INSERT INTO WEBLOGININFOM ( -->
+<!-- 		SYSTEM_CD, SYSTEM_NM, EMAIL, MSG, USER_IP, ACCESS_DATE, USE_MINUTE, CP_CD -->
+<!-- 	) VALUES ( -->
+<!-- 		#{current_system_cd}, -->
+<!-- 		'', -->
+<!-- 		#{email}, -->
+<!-- 		'login.success', -->
+<!-- 		#{user_ip}, -->
+<!-- 		getdate(), -->
+<!-- 		0, -->
+<!-- 		#{cp_cd} -->
+<!-- 	) -->
+<!-- 	]]> -->
+<!-- 	</update> -->
+	
+<!-- 	<update id="loginFail" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 	INSERT INTO WEBLOGINFAILINFOM ( -->
+<!-- 		SYSTEM_CD, SYSTEM_NM, EMAIL, MSG, USER_IP, ACCESS_DATE, CP_CD -->
+<!-- 	) VALUES ( -->
+<!-- 		#{current_system_cd}, -->
+<!-- 		'', -->
+<!-- 		#{email}, -->
+<!-- 		#{userIdx5}, -->
+<!-- 		#{user_ip}, -->
+<!-- 		getdate(), -->
+<!-- 		#{cp_cd} -->
+<!-- 	) -->
+<!-- 	]]> -->
+<!-- 	</update> -->
+	
+<!-- 	<update id="logout" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[	 -->
+<!-- 	INSERT INTO WEBLOGININFOM ( -->
+<!-- 		SYSTEM_CD, SYSTEM_NM, EMAIL, MSG, USER_IP, ACCESS_DATE, USE_MINUTE, CP_CD -->
+<!-- 	) VALUES ( -->
+<!-- 		#{current_system_cd}, -->
+<!-- 		'', -->
+<!-- 		#{email}, -->
+<!-- 		'logout.success', -->
+<!-- 		#{user_ip}, -->
+<!-- 		getdate(), -->
+<!-- 		0, -->
+<!-- 		#{cp_cd} -->
+<!-- 	) -->
+<!-- 	]]> -->
+<!-- 	</update> -->
+	
+<!-- 	<update id="loginFailCount" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 	UPDATE SVMUSERLOGINM -->
+<!-- 	   SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1 -->
+<!-- 	 WHERE EMAIL = #{email} -->
+<!-- 	     AND SYSTEM_CD = #{current_system_cd} -->
+<!-- 	]]> -->
+<!-- 	</update> -->
+	
+<!-- 	<update id="loginFailCountReset" parameterType="com.gms.svm.vo.SVMUserVO"> -->
+<!-- 	<![CDATA[ -->
+<!-- 	UPDATE SVMUSERLOGINM -->
+<!-- 	   SET LOGIN_FAIL_CNT = 0 -->
+<!-- 	 WHERE EMAIL = #{email} -->
+<!-- 	     AND SYSTEM_CD = #{current_system_cd} -->
+<!-- 	]]> -->
+<!-- 	</update> -->
+<!-- 	<select id="calculateLoginFailResetCriterion" resultType="String"> -->
+<!-- 	<![CDATA[ -->
+<!-- 		SELECT CASE WHEN DATEDIFF(MINUTE, MAX(ACCESS_DATE), GETDATE()) > 5 -->
+<!-- 					THEN 'Y' -->
+<!-- 					ELSE 'N' -->
+<!-- 					END -->
+<!-- 				AS RESET_CONFIRM_YN -->
+<!-- 		  FROM WEBLOGINFAILINFOM -->
+<!-- 		 WHERE EMAIL = #{email} -->
+<!-- 		     AND SYSTEM_CD = #{system_cd} -->
+<!-- 	]]>	 -->
+<!-- 	</select> -->
+</mapper>

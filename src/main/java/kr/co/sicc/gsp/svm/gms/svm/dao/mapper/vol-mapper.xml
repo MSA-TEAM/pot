@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.svm.dao.SVMVolDAO">
+	
+	<select id="selectRegiNo" resultType="String">
+		SELECT dbo.FN_SVM_GET_REGI_NO(#{birth_date},#{gender}) AS REGI_NO
+	</select>
+	
+	<delete id="deleteInfor" parameterType="com.gms.svm.vo.SVMInfoVO">
+	<![CDATA[
+		DELETE SVMUSERINFORM
+	]]>
+		<where>
+				AD_NO = #{ad_no}
+			 	AND AREA IN (${area})
+		</where>
+	
+	</delete>
+	
+	<select id="selectInfo" resultType="com.gms.svm.vo.SVMInfoVO">
+			SELECT	  
+				    AD_NO
+				   ,AREA
+				   ,INFO_SEQ
+				   ,USE_YN
+				   ,LEVEL_CD
+				   ,CASE WHEN AREA = 'see'
+							THEN (SELECT CODE_NM3 FROM SVMCODEM WHERE MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE CODE_FIND = 'SPORT_EXP_LVL') AND MINOR_CD = LEVEL_CD)  
+				   		 WHEN AREA = 'ls'
+							THEN (SELECT CODE_NM3 FROM SVMCODEM WHERE MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE CODE_FIND = 'LANG_LVL_CD') AND MINOR_CD = LEVEL_CD)  
+				   		 WHEN AREA = 'oee'
+							THEN (SELECT CODE_NM3 FROM SVMCODEM WHERE MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE CODE_FIND = 'ETC_EXP_LVL') AND MINOR_CD = LEVEL_CD)  
+						 ELSE ''
+				   		 END 
+					  																			   AS LEVEL_NM 
+				   ,NAME_TXT
+				   ,NAME_CD
+				   ,CASE WHEN AREA = 'see'
+							THEN (SELECT CODE_NM3 FROM SVMCODEM WHERE MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE CODE_FIND = 'SPORT_EXP_NM') AND MINOR_CD = NAME_CD)  
+						 ELSE ''
+				   		 END 																	   AS NAME_NM
+				   ,DESCRIPTION
+				   ,DURATION
+				   ,CHECK_CD
+				   ,CASE WHEN AREA = 'lc' 
+				         THEN (SELECT CODE_NM3 FROM SVMCODEM WHERE MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE CODE_FIND = 'AVAIL_LOCATION_CD') AND MINOR_CD = CHECK_CD)  
+				   		 ELSE (SELECT CODE_NM3 FROM SVMCODEM WHERE MAJOR_CD = AREA AND MINOR_CD = CHECK_CD)
+				   		 END  
+				   																				   AS CHECK_NM
+				   ,SKILL_CD
+				   ,dbo.FN_GMS_CODE_NM('LANG_CD', SKILL_CD , #{1}) AS SKILL_NM
+				   ,CASE WHEN area = 'as' THEN (
+				   								SELECT PHOTO_FG FROM (
+				   														SELECT
+				   																ROW_NUMBER() OVER (ORDER BY PHOTO_FG ASC) AS PHOTO_SEQ
+				   															   ,PHOTO_FG FROM SVMPHOTOM 
+					                                        			WHERE  
+					                                        	   				AD_NO = #{0} 
+			                                                  			  AND  PHOTO_FG LIKE '%skillPhoto%'
+			                                             			) AS PHOTOM WHERE PHOTO_SEQ = INFO_SEQ)
+		         		ELSE CERTI_FG 
+			      		 END										  								AS CERTI_FG
+				   
+				   ,CASE WHEN AREA = 'as' THEN (
+			   									SELECT FILE_NM FROM (
+																		SELECT	   
+																				ROW_NUMBER() OVER ( ORDER BY PHOTO_FG ASC) AS PHOTO_SEQ 
+																			   ,FILE_NM FROM SVMPHOTOM 
+																		 WHERE 
+																		 		AD_NO = #{0} 
+																		   AND  PHOTO_FG like '%skillPhoto%'
+																	) AS PHOTOM WHERE PHOTO_SEQ = INFO_SEQ)
+						 ELSE CERTI_NM	
+						  END 
+						   																			AS CERTI_NM
+				  
+				  FROM SVMUSERINFORM
+				  WHERE 1=1
+				  AND AD_NO = #{0}
+					 
+	
+	</select>
+	
+	<select id="select" resultType="com.gms.svm.vo.SVMVolVO">
+		SELECT
+			 VM.AD_NO
+			,VM.REGI_NO
+			,STATUS_FG
+			,LOCAL_FAMILY_NM AS FAMILY_NM
+			,LOCAL_GIVEN_NM AS GIVEN_NM
+			,BIRTH_DATE
+			,GENDER
+			,dbo.FN_GMS_CODE_NM('GENDER', GENDER, #{lang}) AS GENDER_NM
+			,CTRY_CD
+			,dbo.FN_GMS_CODE_NM('CTRY_CD', CTRY_CD, #{lang}) AS CTRY_NM
+			,PASSPORT_NO
+			,ZIPCODE
+			,ADDRESS
+			,OCCU_CD
+			,dbo.FN_GMS_SVM_CODE_NM('OCCU_CD', OCCU_CD, #{lang}) AS OCCU_NM
+			--,ETC_OCCU_NM
+			,UNIV_CD
+			,SCHOOL_NM
+			,UNIV_DEPT_NM
+			,UNIV_STAT
+			,dbo.FN_GMS_SVM_CODE_NM('UNIV_STAT', UNIV_STAT, #{lang}) AS UNIV_STAT_NM
+			,ANY_JOB_YN
+			,AVAIL_WORK_CD
+			,dbo.FN_GMS_SVM_CODE_NM('AVAIL_WORK_CD', AVAIL_WORK_CD, #{lang}) AS AVAIL_WORK_NM
+			,AVAIL_LOCATION_CD
+			,dbo.FN_GMS_SVM_CODE_NM('AVAIL_LOCATION_CD', AVAIL_LOCATION_CD, #{lang}) AS AVAIL_LOCATION_NM
+			,UNI_SHIRTS_CD
+			,dbo.FN_GMS_SVM_CODE_NM('UNI_SHIRTS_CD', UNI_SHIRTS_CD, #{lang}) AS UNI_SHIRTS_NM
+			,UNI_WAIST_CD
+			,dbo.FN_GMS_SVM_CODE_NM('UNI_WAIST_CD', UNI_WAIST_CD, #{lang}) AS UNI_WAIST_NM
+			,UNI_SHOES_CD
+			,dbo.FN_GMS_SVM_CODE_NM('UNI_SHOES_CD', UNI_SHOES_CD, #{lang}) AS UNI_SHOES_NM
+			,GROUP_CD
+			,ONLINE_YN
+			,MARRIED_CD
+			,dbo.FN_GMS_SVM_CODE_NM('MARRIED', MARRIED_CD, #{lang}) AS MARRIED_NM
+			,BLOOD_TYPE_CD
+			,KTP_NO
+			,PROVINSI_CD
+			,dbo.FN_GMS_SVM_CODE_NM('PROVINCE_CD', PROVINSI_CD, #{lang}) AS PROVINSI_NM
+			,CITY_CD
+			,dbo.FN_GMS_SVM_CODE_NM('CITY_CD', CITY_CD, #{lang}) AS CITY_NM
+			,DISTRICT_CD
+			,dbo.FN_GMS_SVM_CODE_NM('DISTRICT_CD', DISTRICT_CD, #{lang}) AS DISTRICT_NM
+			,VILLAGE_CD
+			,dbo.FN_GMS_SVM_CODE_NM('VILLAGE_CD', VILLAGE_CD, #{lang}) AS VILLAGE_NM
+			,MOBILE_NO
+			,OCCU_OR_UNIV_CD
+			,dbo.FN_GMS_SVM_CODE_NM('OCCU_OR_UNIV_CD', OCCU_OR_UNIV_CD, #{lang}) AS OCCU_OR_UNIV_CD_NM
+			,WEIGHT
+			,HEIGHT
+			,ADDRESS_DTL
+			,FACEBOOK_NM
+			,TWITTER_NM
+			,LINE_NM
+			,HOBBY
+			,ASPIRATION
+			,MOTTO
+			,REASON
+			,SD_SCHL_YEAR
+			,SD_SCHL_NM
+			,SMP_SCHL_YEAR
+			,SMP_SCHL_NM
+			,SMA_SCHL_YEAR
+			,SMA_SCHL_NM
+			,UNIVERSITY_YEAR
+			,UNIVERSITY_FACULTY
+			,UNIVERSITY_UNIVERSITY
+			,POST_GRAD_YEAR
+			,POST_GRAD_FACULTY
+			,POST_GRAD_UNIVERSITY
+			,DOCTORAL_YEAR
+			,DOCTORAL_FACULTY
+			,DOCTORAL_UNIVERSITY
+			,PRNTS_MOTHER_NM
+			,PRNTS_FATHER_NM
+			,EMER_PHONE
+			,EMER_REL_CD
+			,dbo.FN_GMS_SVM_CODE_NM('RELATION_CD', EMER_REL_CD, #{lang}) AS EMER_REL_NM
+			,AVAIL_WORK_DESC
+			,EMAIL
+			,POSTCODE
+			,FOREIGN_CITY
+			,WHATS_NO
+			,NICKNAME
+			,NATIONALITY
+			,FILE_GROUP_NO
+			,OCCU_OR_UNIV_NM
+			,OCCU_OR_UNIV_MAJOR_CD
+			,dbo.FN_GMS_SVM_CODE_NM('OCCU_OR_UNIV_MAJOR_CD', OCCU_OR_UNIV_MAJOR_CD, #{lang}) AS OCCU_OR_UNIV_MAJOR_NM2
+			,dbo.FN_GMS_SVM_CODE_NM('OCCU_OR_UNIV_MAJOR_CD', OCCU_OR_UNIV_MAJOR_CD, #{lang}) AS OCCU_OR_UNIV_MAJOR_NM
+			,OCCU_OR_UNIV_ST_MAJOR_CD
+			,dbo.FN_GMS_SVM_CODE_NM('UNIV_STAT',OCCU_OR_UNIV_ST_MAJOR_CD,#{lang}) AS OCCU_OR_UNIV_ST_MAJOR_NM
+			,GROUP_NM
+			,NATIONALITY_CD
+			,(SELECT CODE_IDX2 FROM TCOCODEM WHERE MAJOR_CD = (SELECT MINOR_CD FROM TCOCODEM WHERE CODE_IDX1 = 'CTRY_CD' AND MAJOR_CD ='000') AND MINOR_CD = NATIONALITY_CD ) AS NATIONALITY_MOBILE
+			,UNIVERSITY_LVL_YN
+			,(SELECT
+					SAVE_TAB_CD
+				FROM SVMUSERLOGINM
+				WHERE EMAIL =#{email})
+			AS SAVE_TAB_CD
+			,PP.FILE_NM AS PASSPORTFILE_NM
+			,PP.PHOTO AS PASSPORTFILE_CD
+			,FP.FILE_NM	AS FACEPHOTO_NM
+			,FP.PHOTO AS FACEPHOTO_CD
+			,FP.THUMNAIL AS FACEPHOTO_THUMNAIL
+			,BP.FILE_NM AS BODYPHOTO_NM
+			,BP.PHOTO AS BODYPHOTO_CD
+			,BP.THUMNAIL AS BODYPHOTO_THUMNAIL
+			,CTRY_CD_FG
+			,dbo.FN_GMS_SVM_CODE_NM('CTRY_CD_FG', CTRY_CD_FG, #{lang}) AS CTRY_CD_FG_NM
+		FROM dbo.SVMVOLUNTEERM VM
+		LEFT JOIN SVMPHOTOM PP
+			ON VM.AD_NO = PP.AD_NO
+		   AND PP.PHOTO_FG = 'passport'
+		LEFT JOIN SVMPHOTOM FP
+			ON VM.AD_NO = FP.AD_NO
+		   AND FP.PHOTO_FG = 'facePhoto'
+		LEFT JOIN SVMPHOTOM BP
+			ON VM.AD_NO = BP.AD_NO
+		   AND BP.PHOTO_FG = 'bodyPhoto'
+		WHERE VM.AD_NO =#{ad_no}
+	</select>
+	
+	<insert id="insert" parameterType="com.gms.svm.vo.SVMVolVO" useGeneratedKeys="true">
+		<![CDATA[
+			INSERT INTO SVMVOLUNTEERM
+			           (
+			            AD_NO
+			           ,REGI_NO
+			           ,STATUS_FG
+			           ,LOCAL_FAMILY_NM
+			           ,LOCAL_GIVEN_NM
+			           ,ID_NUMBER1
+			           ,ID_NUMBER2
+			           ,BIRTH_DATE
+			           ,GENDER
+			           ,CTRY_CD_FG
+			           ,CTRY_CD
+			           ,PASSPORT_NO
+			           ,BANK_CD
+			           ,BANK_ACC_NO
+			           ,ZIPCODE
+			           ,ADDRESS
+			           ,RECU_SEC
+			           ,OCCU_CD
+			           ,ETC_OCCU_NM
+			           ,COMP_NM
+			           ,UNIV_CD
+			           ,SCHOOL_NM
+			           ,UNIV_DEPT_NM
+			           ,UNIV_STAT
+			           ,ANY_JOB_YN
+			           ,AVAIL_WORK_CD
+			           ,AVAIL_LOCATION_CD
+			           ,UNI_SHIRTS_CD
+			           ,UNI_WAIST_CD
+			           ,UNI_SHOES_CD
+			           ,REMARK
+			           ,DEPT_TARGET_YN
+			           ,DEPT_CD
+			           ,GROUP_CD
+			           ,ONLINE_YN
+			           ,ORG_CD
+			           ,ETC_ORG_NM
+			           ,SPORTS_CD
+			           ,MARRIED_CD
+			           ,BLOOD_TYPE_CD
+			           ,KTP_NO
+			           ,PROVINSI_CD
+			           ,CITY_CD
+			           ,DISTRICT_CD
+			           ,VILLAGE_CD
+			           ,MOBILE_NO
+			           ,OCCU_OR_UNIV_CD
+			           ,WEIGHT
+			           ,HEIGHT
+			           ,ADDRESS_DTL
+			           ,FACEBOOK_NM
+			           ,TWITTER_NM
+			           ,LINE_NM
+			           ,HOBBY
+			           ,ASPIRATION
+			           ,MOTTO
+			           ,REASON
+			           ,SD_SCHL_YEAR
+			           ,SD_SCHL_NM
+			           ,SMP_SCHL_YEAR
+			           ,SMP_SCHL_NM
+			           ,SMA_SCHL_YEAR
+			           ,SMA_SCHL_NM
+			           ,UNIVERSITY_YEAR
+			           ,UNIVERSITY_FACULTY
+			           ,UNIVERSITY_UNIVERSITY
+			           ,POST_GRAD_YEAR
+			           ,POST_GRAD_FACULTY
+			           ,POST_GRAD_UNIVERSITY
+			           ,DOCTORAL_YEAR
+			           ,DOCTORAL_FACULTY
+			           ,DOCTORAL_UNIVERSITY
+			           ,PRNTS_MOTHER_NM
+			           ,PRNTS_FATHER_NM
+			           ,EMER_PHONE
+			           ,EMER_REL_CD
+			           ,AVAIL_WORK_DESC
+			           ,EMAIL
+			           ,POSTCODE
+			           ,FOREIGN_CITY
+			           ,WHATS_NO
+			           ,NICKNAME
+			           ,NATIONALITY
+			           ,FILE_GROUP_NO
+			           ,OCCU_OR_UNIV_NM
+			           ,OCCU_OR_UNIV_MAJOR_CD
+			           ,OCCU_OR_UNIV_ST_MAJOR_CD
+			           ,GROUP_NM
+			           ,NATIONALITY_CD
+			           ,UNIVERSITY_LVL_YN
+			           ,CRT_DT
+			           ,CRT_ID
+			           ,CRT_IP
+			           )
+			     VALUES
+			           (
+			            CONVERT(VARCHAR,dbo.FN_SVM_GET_AD_NO('V'))
+			           ,#{regi_no}
+			           ,#{status_fg}
+			           ,#{family_nm}
+			           ,#{given_nm}
+			           ,#{id_number1}
+			           ,#{id_number2}
+			           ,#{birth_date}
+			           ,#{gender} 
+			           ,#{ctry_cd_fg}
+			           ,#{ctry_cd}
+			           ,#{passport_no}
+			           ,#{bank_cd}
+			           ,#{bank_acc_no}
+			           ,#{zipcode}
+			           ,#{address}
+			           ,#{recu_sec}
+			           ,#{occu_cd}
+			           ,#{etc_occu_nm}
+			           ,#{comp_nm}
+			           ,#{univ_cd}
+			           ,#{school_nm}
+			           ,#{univ_dept_nm}
+			           ,#{univ_stat}
+			           ,#{any_job_yn}
+			           ,#{avail_work_cd}
+			           ,#{avail_location_cd}
+			           ,#{uni_shirts_cd}
+			           ,#{uni_waist_cd}
+			           ,#{uni_shoes_cd}
+			           ,#{remark}
+			           ,#{dept_target_yn}
+			           ,#{dept_cd}
+			           ,#{group_cd}
+			           ,#{online_yn}
+			           ,#{org_cd}
+			           ,#{etc_org_nm}                       
+			           ,#{sports_cd}                        
+			           ,#{married_cd}                          
+			           ,#{blood_type_cd}                    
+			           ,#{ktp_no}                           
+			           ,#{provinsi_cd}                      
+			           ,#{city_cd}                          
+			           ,#{district_cd}                      
+			           ,#{village_cd}                       
+			           ,#{mobile_no}                        
+			           ,#{occu_or_univ_cd}                  
+			           ,#{weight}                           
+			           ,#{height}                           
+			           ,#{address_dtl}                     
+			           ,#{facebook_nm}                      
+			           ,#{twitter_nm}                       
+			           ,#{line_nm}                          
+			           ,#{hobby}                            
+			           ,#{aspiration}                       
+			           ,#{motto}                            
+			           ,#{reason}                           
+			           ,#{sd_schl_year}                     
+			           ,#{sd_schl_nm}                       
+			           ,#{smp_schl_year}                    
+			           ,#{smp_schl_nm}                      
+			           ,#{sma_schl_year}                    
+			           ,#{sma_schl_nm}                      
+			           ,#{university_year}                  
+			           ,#{university_faculty}                  
+			           ,#{university_university}
+			           ,#{post_grad_year}                   
+			           ,#{post_grad_faculty}                
+			           ,#{post_grad_university}
+			           ,#{doctoral_year}
+			           ,#{doctoral_faculty}
+			           ,#{doctoral_university}
+			           ,#{prnts_mother_nm}
+			           ,#{prnts_father_nm}
+			           ,#{emer_phone}                   
+			           ,#{emer_rel_cd}                     
+			           ,#{avail_work_desc}              
+			           ,#{email}                        
+			           ,#{postcode}                     
+			           ,#{foreign_city}                 
+			           ,#{whats_no}                     
+			           ,#{nickname}                     
+			           ,#{nationality}                  
+			           ,#{file_group_no}
+			           ,#{occu_or_univ_nm}              
+			           ,#{occu_or_univ_major_cd}
+			           ,#{occu_or_univ_st_major_cd}
+			           ,#{group_nm}      
+			           ,#{nationality_cd}
+			           ,#{university_lvl_yn}
+					   ,GETDATE()
+			           ,#{username}
+					   ,#{user_ip}
+					]]>
+					<![CDATA[
+					)
+					]]>
+	
+		<selectKey keyColumn="AD_NO" keyProperty="ad_no" order="AFTER" resultType="com.gms.svm.vo.SVMVolVO">
+				SELECT CONVERT(VARCHAR,AD_NO) AS AD_NO FROM SVMVOLUNTEERM WHERE REGI_NO =  #{regi_no}
+		</selectKey>
+	</insert>
+	
+	<insert id="insertInfor" parameterType="com.gms.svm.vo.SVMVolVO">
+	           WITH t AS
+				(
+				<foreach collection="areaList" item="data" index="index" open="" separator="" close="">
+					<if test="index != 0">
+						UNION ALL
+					</if>
+						SELECT
+						    isNull(#{ad_no},'') AS AD_NO 
+						   ,isNull(#{data.area},'') AS AREA 
+				           ,isNull(#{data.use_yn},'') AS USE_YN
+				           ,isNull(#{data.level_cd},'') AS LEVEL_CD
+				           ,isNull(#{data.name_txt},'') AS NAME_TXT
+				           ,isNull(#{data.name_cd},'') AS NAME_CD
+				           ,isNull(#{data.duration},'') AS DURATION
+				           ,isNull(#{data.description},'') AS DESCRIPTION
+				           ,isNull(#{data.check_cd},'') AS CHECK_CD
+				           ,isNull(#{data.certi_nm},'') AS CERTI_NM
+				           ,isNull(#{data.skill_cd},'') AS SKILL_CD
+				           ,isNull(#{data.certi_fg},'') AS CERTI_FG                                              
+				           ,isNull(GETDATE(),'') AS CRT_DT                                                    	
+						   ,isNull(#{username},'') AS CRT_ID
+						   <choose>
+						   <when test="user_ip == null">
+							   ,isNull('','') AS CRT_IP
+						   </when>
+						   <otherwise>
+							   ,isNull(#{user_ip},'') AS CRT_IP
+						   </otherwise>
+						   </choose>
+						   ,isNull(GETDATE(),'') AS UDT_DT
+						   ,isNull(#{username},'') AS UDT_ID
+						   <choose>
+						   <when test="user_ip == null">
+							   ,isNull('','') AS UDT_IP
+						   </when>
+						   <otherwise>
+							   ,isNull(#{user_ip},'') AS UDT_IP
+						   </otherwise>
+						   </choose>
+				</foreach>
+				)
+				INSERT INTO SVMUSERINFORM
+		           (INFO_SEQ
+		           ,AD_NO
+		           ,AREA
+		           ,USE_YN
+		           ,LEVEL_CD
+		           ,NAME_TXT
+		           ,NAME_CD
+		           ,DURATION
+		           ,DESCRIPTION
+		           ,CHECK_CD
+		           ,CERTI_NM
+		           ,SKILL_CD
+		           ,CERTI_FG
+		           ,CRT_DT
+		           ,CRT_ID
+		           ,CRT_IP
+		           ,UDT_DT
+		           ,UDT_ID
+		           ,UDT_IP
+		           )
+				SELECT ROW_NUMBER() OVER (PARTITION BY AREA ORDER BY AREA) AS INFO_SEQ ,* FROM t
+	</insert>
+	
+	
+	<update id="update" parameterType="com.gms.svm.vo.SVMVolVO">          
+			UPDATE SVMVOLUNTEERM
+			<set> 
+				   	   UDT_DT                  =  	  GETDATE()                         
+					  ,UDT_IP                  =  	  #{user_ip}                       
+					  ,UDT_ID                  =  	  #{username}
+				  <if test="status_fg != null and status_fg != '' ">       
+				   	  ,STATUS_FG 	           =      #{status_fg}                   
+			   	  </if>
+			   	  <if test="family_nm != null and family_nm != '' ">  
+				      ,LOCAL_FAMILY_NM         =      #{family_nm}
+				  </if>    
+				  <if test="given_nm != null and given_nm != '' ">                     
+				      ,LOCAL_GIVEN_NM          =      #{given_nm}
+				  </if>    
+				  <if test="birth_date != null and birth_date != '' ">                       
+				      ,BIRTH_DATE              =      #{birth_date}
+				  </if>                       
+				  <if test="gender != null and gender != '' ">  
+				      ,GENDER                  =      #{gender}
+				  </if>    
+				  <if test="ctry_cd_fg != null and ctry_cd_fg != '' ">  
+				      ,CTRY_CD_FG              =      #{ctry_cd_fg}  
+				  </if>                            
+				  <if test="ctry_cd != null and ctry_cd != '' ">  
+				      ,CTRY_CD                 =      #{ctry_cd}
+				  </if>                                               
+				  <if test="passport_no != null and passport_no != '' ">  
+				      ,PASSPORT_NO             =      #{passport_no}  
+				  </if>                      
+				  <if test="zipcode != null and zipcode != '' ">  
+				      ,ZIPCODE                 =      #{zipcode}      
+				  </if>                      
+				  <if test="address != null and address != '' ">  
+				      ,ADDRESS                 =      #{address}   
+				  </if>                         
+				  <if test="recu_sec != null and recu_sec != '' ">   
+				      ,RECU_SEC                =      #{recu_sec}    
+				  </if>                       
+				  <if test="occu_cd != null and occu_cd != '' ">
+				      ,OCCU_CD                 =      #{occu_cd}       
+				  </if>                     
+				  <if test="univ_cd != null and univ_cd != '' ">  
+				      ,UNIV_CD                 =      #{univ_cd}    
+				  </if>                         
+				  <if test="school_nm != null and school_nm != '' ">  
+				      ,SCHOOL_NM               =      #{school_nm}    
+				  </if>                      
+				  <if test="univ_dept_nm != null and univ_dept_nm != '' ">  
+				      ,UNIV_DEPT_NM            =      #{univ_dept_nm}    
+				  </if>                   
+				  <if test="univ_stat != null and univ_stat != '' ">  
+				      ,UNIV_STAT               =      #{univ_stat}      
+				  </if>                   
+				  <if test="any_job_yn != null and any_job_yn != '' ">  
+				      ,ANY_JOB_YN              =      #{any_job_yn}   
+				  </if>                      
+				  <if test="avail_work_cd != null and avail_work_cd != '' ">  
+				      ,AVAIL_WORK_CD           =      #{avail_work_cd}   
+				  </if>                   
+				  <if test="avail_location_cd != null and avail_location_cd != '' ">  
+				      ,AVAIL_LOCATION_CD       =      #{avail_location_cd}  
+				  </if>                
+				  <if test="uni_shirts_cd != null and uni_shirts_cd != '' ">  
+				      ,UNI_SHIRTS_CD           =      #{uni_shirts_cd}  
+				  </if>                    
+				  <if test="uni_waist_cd != null and uni_waist_cd != '' ">  
+				      ,UNI_WAIST_CD            =      #{uni_waist_cd} 
+				  </if>                      
+				  <if test="uni_shoes_cd != null and uni_shoes_cd != '' ">  
+				      ,UNI_SHOES_CD            =      #{uni_shoes_cd} 
+				  </if>                      
+				  <if test="dept_target_yn != null and dept_target_yn != '' ">  
+				      ,DEPT_TARGET_YN          =      #{dept_target_yn}   
+				  </if>                  
+				  <if test="group_cd != null and group_cd != '' ">  
+				      ,GROUP_CD                =      #{group_cd}         
+				  </if>                  
+				  <if test="online_yn != null and online_yn != '' ">  
+				      ,ONLINE_YN               =      #{online_yn}
+				  </if>                          
+				  <if test="org_cd != null and org_cd != '' ">  
+				      ,ORG_CD                  =      #{org_cd} 
+				  </if>                            
+				  <if test="sports_cd != null and sports_cd != '' ">  
+				      ,SPORTS_CD               =      #{sports_cd} 
+				  </if>                         
+				  <if test="married_cd != null and married_cd != '' ">  	
+					  ,MARRIED_CD              =   	  #{married_cd}  
+				  </if>	                     
+				  <if test="blood_type_cd != null and blood_type_cd != '' ">  
+					  ,BLOOD_TYPE_CD           =   	  #{blood_type_cd} 
+				  </if>	                   
+				  <if test="ktp_no != null and ktp_no != '' ">  
+					  ,KTP_NO                  =   	  #{ktp_no}      
+				  </if>	                     
+				  <if test="provinsi_cd != null and provinsi_cd != '' ">  
+					  ,PROVINSI_CD             =   	  #{provinsi_cd}  
+				  </if>	                    
+				  <if test="city_cd != null and city_cd != '' ">  
+					  ,CITY_CD                 =   	  #{city_cd}     
+				  </if>	                     
+				  <if test="district_cd != null and district_cd != '' ">  
+					  ,DISTRICT_CD             =   	  #{district_cd}  
+				  </if>                    
+				  <if test="village_cd != null and village_cd != '' ">  
+					  ,VILLAGE_CD              =   	  #{village_cd}   
+				  </if>                    
+				  <if test="mobile_no != null and mobile_no != '' ">  	
+					  ,MOBILE_NO               =   	  #{mobile_no}   
+				  </if>                     
+				  <if test="occu_or_univ_cd != null and occu_or_univ_cd != '' ">  	
+					  ,OCCU_OR_UNIV_CD         =   	  #{occu_or_univ_cd}    
+				  </if>           
+				  <if test="weight != null and weight != '' ">  	
+					  ,WEIGHT                  =   	  #{weight}            
+				  </if>            
+				  <if test="height != null and height != '' ">  	
+					  ,HEIGHT                  =   	  #{height}        
+				  </if>                
+			  	  <if test="address_dtl != null and address_dtl != '' ">  	
+					  ,ADDRESS_DTL             =   	  #{address_dtl}
+				  </if>                   
+				  <if test="facebook_nm != null and facebook_nm != '' ">  	
+					  ,FACEBOOK_NM             =   	  #{facebook_nm}   
+                  </if>
+				  <if test="twitter_nm != null and twitter_nm != '' ">  	
+					  ,TWITTER_NM              =   	  #{twitter_nm}   
+				  </if>                 
+				  <if test="line_nm != null and line_nm != '' ">  	
+					  ,LINE_NM                 =   	  #{line_nm}    
+				  </if>
+				  <if test="hobby != null and hobby != '' ">  	
+					  ,HOBBY                   =   	  #{hobby}     
+				  </if>                       
+				  <if test="aspiration != null and aspiration != '' ">  	
+					  ,ASPIRATION              =   	  #{aspiration}  
+				  </if>                    
+				  <if test="motto != null and motto != '' ">  	
+					  ,MOTTO                   =   	  #{motto}      
+				  </if>                      
+				  <if test="reason != null and reason != '' ">  	
+					  ,REASON                  =   	  #{reason}    
+				  </if>	                       
+				  <if test="sd_schl_year != null and sd_schl_year != '' ">  	
+					  ,SD_SCHL_YEAR            =   	  #{sd_schl_year}   
+				  </if>	                  
+				  <if test="sd_schl_nm != null and sd_schl_nm != '' ">  	
+					  ,SD_SCHL_NM              =   	  #{sd_schl_nm}  
+				  </if>	                     
+				  <if test="smp_schl_year != null and smp_schl_year != '' ">  	
+					  ,SMP_SCHL_YEAR           =   	  #{smp_schl_year}  
+				  </if>	                  
+				  <if test="smp_schl_nm != null and smp_schl_nm != '' ">  	
+				  	  ,SMP_SCHL_NM             =   	  #{smp_schl_nm}  
+			   	  </if>	                    
+			   	  <if test="sma_schl_year != null and sma_schl_year != '' ">  	
+			   	  	  ,SMA_SCHL_YEAR           =   	  #{sma_schl_year}  
+			   	  </if>	                  
+			   	  <if test="sma_schl_nm != null and sma_schl_nm != '' ">  	
+			   	  	  ,SMA_SCHL_NM             =   	  #{sma_schl_nm}  
+			   	  </if>	                    
+			   	  <if test="university_year != null and university_year != '' ">  	
+			   	  	  ,UNIVERSITY_YEAR         =   	  #{university_year} 
+			   	  </if>	                 
+			   	  <if test="university_faculty != null and university_faculty != '' ">  	
+			   	  	  ,UNIVERSITY_FACULTY         =   	  #{university_faculty} 
+			   	  </if>	                 
+			   	  <if test="university_university != null and university_university != '' ">  	
+			   	  	  ,UNIVERSITY_UNIVERSITY   =   	  #{university_university}  
+			   	  </if>	          
+			   	  <if test="post_grad_year != null and post_grad_year != '' ">  	
+			   	  	  ,POST_GRAD_YEAR          =   	  #{post_grad_year} 
+			   	  </if>	                  
+			   	  <if test="post_grad_faculty != null and post_grad_faculty != '' ">  	
+			   	  	  ,POST_GRAD_FACULTY       =   	  #{post_grad_faculty} 
+			   	  </if>	               
+			   	  <if test="post_grad_university != null and post_grad_university != '' ">  	
+			   	  	  ,POST_GRAD_UNIVERSITY    =   	  #{post_grad_university}  
+			   	  </if>	           
+			   	  <if test="doctoral_year != null and doctoral_year != '' ">  	
+			   	  	  ,DOCTORAL_YEAR           =   	  #{doctoral_year} 
+			   	  </if>	                   
+			   	  <if test="doctoral_faculty != null and doctoral_faculty != '' ">  	
+			   	  	  ,DOCTORAL_FACULTY        =   	  #{doctoral_faculty} 
+			   	  </if>	               
+			   	  <if test="doctoral_university != null and doctoral_university != '' ">  	
+			   	  	  ,DOCTORAL_UNIVERSITY     =   	  #{doctoral_university} 
+			   	  </if>	             
+			   	  <if test="prnts_mother_nm != null and prnts_mother_nm != '' ">  	
+			   		  ,PRNTS_MOTHER_NM         =   	  #{prnts_mother_nm} 
+			   	  </if>	                 
+			   	  <if test="prnts_father_nm != null and prnts_father_nm != '' ">  	
+			   	  	  ,PRNTS_FATHER_NM         =   	  #{prnts_father_nm} 
+			   	  </if>	                 
+			   	  <if test="emer_phone != null and emer_phone != '' ">  	
+			   		  ,EMER_PHONE              =   	  #{emer_phone}
+                  </if>    
+			   	  <if test="emer_rel_cd != null and emer_rel_cd != '' ">  	
+			   	  	  ,EMER_REL_CD             =   	  #{emer_rel_cd}   
+				  </if>	                   
+				  <if test="avail_work_desc != null and avail_work_desc != '' ">  	
+				  	  ,AVAIL_WORK_DESC         =   	  #{avail_work_desc}  
+				  </if>	                
+				  <if test="email != null and email != '' ">  	
+				  	  ,EMAIL                   =   	  #{email}     
+				  </if>	                       
+				  <if test="postcode != null and postcode != '' ">  	
+				  	  ,POSTCODE                =      #{postcode} 
+				  </if>	                        
+				  <if test="foreign_city != null and foreign_city != '' ">  	
+				  	  ,FOREIGN_CITY            =      #{foreign_city} 
+				  </if>	                    
+				  <if test="whats_no != null and whats_no != '' ">  	
+				  	  ,WHATS_NO                =      #{whats_no}  
+				  </if>	                       
+				  <if test="nickname != null and nickname != '' ">  	
+				  	  ,NICKNAME                =      #{nickname}
+				  </if>	                         
+				  <if test="nationality != null and nationality != '' ">  	
+				  	  ,NATIONALITY             =      #{nationality}  
+				  </if>	                    
+				  <if test="file_group_no != null and file_group_no != '' ">  	
+				  	  ,FILE_GROUP_NO           =      #{file_group_no}
+				  </if>	                    
+				  <if test="occu_or_univ_nm != null and occu_or_univ_nm != '' ">  	
+				  	  ,OCCU_OR_UNIV_NM         =  	  #{occu_or_univ_nm}
+				  </if>	                  
+				  <if test="occu_or_univ_major_cd != null and occu_or_univ_major_cd != '' ">  	
+				  	  ,OCCU_OR_UNIV_MAJOR_CD   =  	  #{occu_or_univ_major_cd}
+				  </if>	            
+				  <if test="occu_or_univ_st_major_cd != null and occu_or_univ_st_major_cd != '' ">  	
+				  	  ,OCCU_OR_UNIV_ST_MAJOR_CD=  	  #{occu_or_univ_st_major_cd}
+				  </if>	         
+				  <if test="group_nm != null and group_nm != '' ">  	
+				  	  ,GROUP_NM                =  	  #{group_nm}
+				  </if>	                         
+				  <if test="nationality_cd != null and nationality_cd != '' ">  	
+				  	  ,NATIONALITY_CD          =  	  #{nationality_cd}
+				  </if>                 
+				  <if test="university_lvl_yn != null and university_lvl_yn != '' ">  	
+				  	  ,UNIVERSITY_LVL_YN       =  	  #{university_lvl_yn}
+				  </if>
+			</set>              
+				 WHERE		  
+				 	   AD_NO = #{ad_no}
+	</update>                                                              
+	
+	
+
+</mapper>

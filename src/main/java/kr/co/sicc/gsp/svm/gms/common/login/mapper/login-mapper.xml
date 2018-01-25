@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.common.login.LoginDAO">
+  	<select id="auth" resultType="com.gms.common.login.UserInfo" >
+    SELECT USER_ID, PASSWORD, (CASE WHEN USE_YN = 'Y' THEN 1 ELSE 0 END) AS ENABLED, ENC_SALT AS SALT
+   	  FROM WEBUSERM
+   	 WHERE USER_ID = #{user_id}
+   	     AND SYSTEM_CD = #{system_cd}
+  	</select>
+  	
+  	<select id="authList" resultType="com.gms.common.login.Role">    
+	SELECT UG.GROUP_ID AS NAME,
+		   UG.GROUP_ID AS permission,
+		   '' as accesspriv
+	  FROM WEBUSERGROUPD UG
+	  JOIN WEBGROUPM WG
+	  ON UG.GROUP_ID = WG.GROUP_ID
+	  AND WG.SYSTEM_CD = #{system_cd}
+	 WHERE USER_ID = #{user_id}
+	 ORDER BY UG.GROUP_ID
+  	</select>
+  	
+  	<select id="userInfo" resultType="com.gms.common.login.UserInfo" >
+    SELECT USER_ID
+    	  ,PASSWORD
+	      ,dbo.FN_DECT(USER_NM) AS USER_NM
+	      ,SYSTEM_CD AS userSystemCd
+	      ,ASSIGN_GROUP_ID as userGroupId
+	      ,USE_YN
+	      ,LOGIN_FAIL_CNT as loginFailCnt,
+	      (CASE WHEN USE_YN = 'Y' THEN 1 ELSE 0 END) AS ENABLED, 
+	      ENC_SALT AS SALT
+   	  FROM WEBUSERM
+   	 WHERE USER_ID = #{user_id}
+   	    AND SYSTEM_CD = #{system_cd}
+  	</select>
+  	
+	<update id="loginSuccess" parameterType="com.gms.common.login.UserInfo">
+	<![CDATA[
+	INSERT INTO WEBLOGININFOM (
+		SYSTEM_CD, SYSTEM_NM, USER_ID, MSG, USER_IP, ACCESS_DATE, USE_MINUTE, CP_CD
+	) VALUES (
+		#{current_system_cd},
+		'',
+		#{user_id},
+		'login.success',
+		#{user_ip},
+		getdate(),
+		0,
+		#{cp_cd}
+	)
+	]]>
+	</update>
+	
+	<update id="loginFail" parameterType="com.gms.common.login.UserInfo">
+	<![CDATA[
+	INSERT INTO WEBLOGINFAILINFOM (
+		SYSTEM_CD, SYSTEM_NM, USER_ID, MSG, USER_IP, ACCESS_DATE, CP_CD
+	) VALUES (
+		#{current_system_cd},
+		'',
+		#{user_id},
+		#{userIdx5},
+		#{user_ip},
+		getdate(),
+		#{cp_cd}
+	)
+	]]>
+	</update>
+	
+	<update id="logout" parameterType="com.gms.common.login.UserInfo">
+	<![CDATA[	
+	INSERT INTO WEBLOGININFOM (
+		SYSTEM_CD, SYSTEM_NM, USER_ID, MSG, USER_IP, ACCESS_DATE, USE_MINUTE, CP_CD
+	) VALUES (
+		#{current_system_cd},
+		'',
+		#{user_id},
+		'logout.success',
+		#{user_ip},
+		getdate(),
+		0,
+		#{cp_cd}
+	)
+	]]>
+	</update>
+	
+	<update id="loginFailCount" parameterType="com.gms.common.login.UserInfo">
+	<![CDATA[
+	UPDATE WEBUSERM
+	   SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1
+	 WHERE USER_ID = #{user_id}
+	     AND SYSTEM_CD = #{current_system_cd}
+	]]>
+	</update>
+	
+	<update id="loginFailCountReset" parameterType="com.gms.common.login.UserInfo">
+	<![CDATA[
+	UPDATE WEBUSERM
+	   SET LOGIN_FAIL_CNT = 0
+	 WHERE USER_ID = #{user_id}
+	     AND SYSTEM_CD = #{current_system_cd}
+	]]>
+	</update>
+	<select id="calculateLoginFailResetCriterion" resultType="String">
+	<![CDATA[
+		SELECT CASE WHEN DATEDIFF(MINUTE, MAX(ACCESS_DATE), GETDATE()) > 5
+					THEN 'Y'
+					ELSE 'N'
+					END
+				AS RESET_CONFIRM_YN
+		  FROM WEBLOGINFAILINFOM
+		 WHERE USER_ID = #{user_id}
+		     AND SYSTEM_CD = #{system_cd}
+	]]>	
+	</select>
+</mapper>

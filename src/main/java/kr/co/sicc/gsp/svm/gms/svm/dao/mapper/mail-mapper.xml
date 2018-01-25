@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.svm.dao.MailDAO">
+
+	<select id="authCheck" resultType="String">
+		SELECT 
+			--EMAIL,
+			 EMAIL_DUMMY
+			--, AD_NO, EMAIL_AUTH_YN, PASSWORD, CHNG_PW_YN, BIRTH_DATE
+ 		FROM 
+ 		 	SVMUSERLOGINM
+ 		WHERE 
+ 			EMAIL = #{targetEmail}
+	</select>
+	
+	<update id="authSuccess">
+		<![CDATA[
+		UPDATE
+			 SVMUSERLOGINM
+		SET 
+			EMAIL_AUTH_YN = 'Y',
+			UDT_DT = GETDATE()
+		WHERE 
+			EMAIL = #{targetEmail}
+		]]>
+	</update>
+	
+	<update id="updateEmailDummy" parameterType="hashmap">
+		<![CDATA[
+		UPDATE
+			 SVMUSERLOGINM
+		SET 
+			EMAIL_DUMMY = #{dummyKey},
+			UDT_DT = GETDATE(),
+			UDT_IP = #{ip}
+		WHERE 
+			EMAIL = #{targetEmail}
+		]]>
+	</update>
+
+</mapper>

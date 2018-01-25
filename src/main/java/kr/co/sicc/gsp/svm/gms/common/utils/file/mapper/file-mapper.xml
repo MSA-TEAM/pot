@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.common.utils.file.FileDAO">
+	<select id="list" resultType="hashmap">
+	<![CDATA[
+		SELECT SYSTEM_CD,
+               WORK_NM,
+               FILE_GROUP_NO,   
+			   FILE_NO,
+			   FILE_NM,
+			   SAVE_FILE_NM,
+			   FILE_SIZE,
+			   FILE_CONTENT_TYPE,
+			   DOWNLOAD_CNT,
+			   CRT_ID,
+			   CRT_IP,
+			   CRT_DATE,
+			   UDT_ID,
+			   UDT_IP,
+			   UDT_DATE
+		  FROM GMSFILEM
+		 WHERE FILE_GROUP_NO = #{0}
+	]]>
+	</select>
+    
+	<select id="read" resultType="com.gmsutil.file.FileVO">
+	<![CDATA[
+		SELECT SYSTEM_CD,
+               WORK_NM,
+               FILE_GROUP_NO,
+			   FILE_NO,
+			   FILE_NM,
+			   SAVE_FILE_NM,
+			   FILE_SIZE,
+			   FILE_CONTENT_TYPE,
+			   DOWNLOAD_CNT,
+			   CRT_ID,
+			   CRT_IP,
+			   CRT_DATE,
+			   UDT_ID,
+			   UDT_IP,
+			   UDT_DATE
+		  FROM GMSFILEM
+		 WHERE FILE_NO = #{0}
+	]]>
+	</select>
+    
+    <update id="count_up">
+    <![CDATA[
+        UPDATE GMSFILEM
+           SET DOWNLOAD_CNT = DOWNLOAD_CNT + 1
+         WHERE FILE_NO = #{0}
+    ]]>
+    </update>
+    
+    <insert id="insert" parameterType="com.gmsutil.file.FileVO">
+    <![CDATA[
+        INSERT INTO GMSFILEM (
+               SYSTEM_CD,
+               WORK_NM,
+               FILE_GROUP_NO,
+               FILE_NO,    
+               FILE_NM,
+               SAVE_FILE_NM,
+               FILE_SIZE,
+               FILE_CONTENT_TYPE,
+               DOWNLOAD_CNT,
+               CRT_ID,    
+               CRT_IP,    
+               CRT_DATE,
+               UDT_ID,    
+               UDT_IP,    
+               UDT_DATE  
+        ) VALUES (
+               #{system_cd},
+               #{work_nm},
+               #{file_group_no},
+               #{file_no},   
+               #{file_nm},
+               #{save_file_nm},
+               #{file_size},
+               #{file_content_type},
+               #{download_cnt},
+               #{crt_id},
+               #{crt_ip},   
+               getdate(),
+               #{udt_id},  
+               #{udt_ip},  
+               getdate()
+        )
+    ]]>
+    </insert>
+    
+    <delete id="delete">
+    <![CDATA[
+        DELETE 
+          FROM GMSFILEM
+         WHERE FILE_NO = #{0}
+    ]]>
+    </delete>
+    
+    <delete id="delete_all">
+    <![CDATA[
+        DELETE 
+          FROM GMSFILEM
+         WHERE FILE_GROUP_NO = #{0}
+    ]]>
+  </delete>
+</mapper>

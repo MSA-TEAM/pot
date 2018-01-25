@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-4.2.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+
+	<context:component-scan base-package="com.gms.**,com.sicc.**"/>
+	
+	<mvc:annotation-driven/>
+	
+	<aop:aspectj-autoproxy/>
+
+	<tx:annotation-driven transaction-manager="txManager"/>
+	
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+	
+	<bean id="sender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="203.255.241.196"/>
+<!-- 		<property name="host" value="10.20.27.9"/> -->
+	</bean>
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*/cfs/**"/>
+			<mvc:mapping path="/*/#{SICC_SYSTEM.toLowerCase()}/**"/>
+			<mvc:exclude-mapping path="/js/**"/>
+			<mvc:exclude-mapping path="/css/**"/>
+			<mvc:exclude-mapping path="/images/**"/>
+			<mvc:exclude-mapping path="/dtds/**"/>
+			<mvc:exclude-mapping path="/font/**"/>
+			<mvc:exclude-mapping path="/resources/**"/>
+			<mvc:exclude-mapping path="/link_files/**"/>
+			<bean class="com.gms.common.interceptor.SiccPagePresetInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/link_files/**" location="/link_files/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/font/**" location="/font/" />
+	<mvc:resources mapping="/dtds/*" location="/WEB-INF/dtds/" />
+	<mvc:resources mapping="/images/**" location="/images/" />
+ 
+ 	<!-- Tiles -->
+ 	<bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+ 		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/>
+ 		<property name="order" value="0"/>
+ 	</bean>
+ 	
+ 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+ 		<property name="definitions">
+ 			<list>
+ 				<value>/WEB-INF/config/layout/tiles.xml</value>
+ 			</list>
+ 		</property>
+ 		<property name="preparerFactoryClass" value="org.springframework.web.servlet.view.tiles3.SimpleSpringPreparerFactory"/>
+ 	</bean>
+ 
+ 	<!-- NegotiatingViewResolver -->
+ 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="order" value="1"/>
+		<property name="contentNegotiationManager">
+			<bean class="org.springframework.web.accept.ContentNegotiationManager">
+				<constructor-arg>
+					<bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+						<constructor-arg>
+						<map>
+							<entry key="json" value="application/json"/>
+<!-- 							<entry key="xml" value="application/xml"/> -->
+<!-- 							<entry key="text" value="text/plain"/> -->
+						</map>
+					</constructor-arg>
+					</bean>
+				</constructor-arg>
+			</bean>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<ref bean="jsonView"/>
+<!-- 				<ref bean="textView"/> -->
+<!-- 				<ref bean="xmlView"/> -->				
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+	</bean>
+	
+ 	<!-- 기본 리졸버 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="2"/>
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+		<property name="prefix" value="/WEB-INF/views" />
+		<property name="suffix" value=".jsp" />
+		<property name="contentType" value="text/html; charset=UTF-8"/>
+	</bean>
+	
+	<!-- 예외처리 리졸버 -->
+	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="order" value="1" />
+		<property name="defaultErrorView" value="common/error/error" />
+		<property name="exceptionMappings">
+			<props>
+				<prop key="BusinessLogicException">common/error/500</prop>
+				<prop key="RuntimeException">common/error/500</prop>
+				<prop key="TypeMismatchException">common/error/500</prop>
+				<prop key="NoSuchRequestHandlingMethodException">common/error/500</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- 다국어 지원 설정 -->
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<property name="paramName" value="lang"/>
+	</bean>
+	
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+<!-- 		<property name="defaultLocale" value="en"/> -->
+	</bean>
+	
+	<!-- 메시지 처리 -->
+	<bean id="messageSource" class="com.sicc.session.SerializableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:com/gms/messages/globalMessage</value>
+                <value>classpath:com/gms/messages/#{SICC_SYSTEM.toLowerCase()}Message</value>
+                <value>classpath:com/gms/messages/cfsMessage</value>
+                <value>classpath:com/gms/messages/sysMessage</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8"/>
+		<property name="fallbackToSystemLocale" value="false" />
+	</bean>
+	
+	<bean id="siccProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/config/sicc.properties</value>
+			</list>
+		</property>	
+	</bean>
+	
+	<bean id="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref bean="localeChangeInterceptor"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- TEST EMAIL	 -->
+	<context:property-placeholder location="/WEB-INF/config/emailApplication.properties"/>
+
+</beans>

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gms.sys.dao.SYSUserDAO">
+	<select id="list" resultType="hashmap">
+	<![CDATA[
+		SELECT 	U.USER_ID, dbo.FN_DECT(U.USER_NM) AS USER_NM, U.SYSTEM_CD, U.USE_YN
+				, dbo.FN_SYS_GROUP_NM(U.USER_ID, 4) AS GROUP_ID 
+				, U.RN
+	  	FROM 	
+	  	(
+			SELECT 	ROW_NUMBER() OVER(
+	]]>	
+			<if test="search_order != null and search_order != '' ">
+				ORDER BY ${search_order}
+			</if>
+			<if test="search_order == null or search_order == '' ">
+				ORDER BY USER_ID
+			</if>
+	<![CDATA[		
+					) AS RN
+					, A.*
+		  	FROM 	WEBUSERM A
+		 	WHERE 	1=1
+	]]>
+		<if test="search_system_cd != null and search_system_cd != '' ">
+			AND SYSTEM_CD = #{search_system_cd}
+		</if>
+		<if test="search_use_yn != null and search_use_yn != '' ">
+			AND USE_YN = #{search_use_yn}
+		</if>
+		<if test="search_user_id != null and search_user_id != '' ">
+			AND USER_ID LIKE '%${search_user_id}%'
+		</if>
+		<if test="search_user_group != null and search_user_group != '' ">
+			AND USER_IDX5 = #{search_user_group}
+		</if>
+		<if test="search_user_nm != null and search_user_nm != '' ">
+			AND USER_NM LIKE '%${search_user_nm}%' 
+		</if>
+		<if test="search_group_id != null and search_group_id != '' ">
+			AND #{search_group_id} IN (SELECT VAL FROM dbo.FN_SPLIT_TBL(ASSIGN_GROUP_ID))
+		</if>
+	<![CDATA[
+		) U
+		WHERE	RN >= ${page_st}
+		  AND	RN <  ${page_ed}
+	]]>
+	</select>
+	
+	<select id="total_cnt" resultType="int">
+	<![CDATA[
+		SELECT 	COUNT(USER_ID) AS TOTAL_CNT
+		  FROM 	WEBUSERM
+		 WHERE 	1=1
+	]]>
+		<if test="search_system_cd != null and search_system_cd != '' ">
+			AND SYSTEM_CD = #{search_system_cd}
+		</if>
+		<if test="search_use_yn != null and search_use_yn != '' ">
+			AND USE_YN = #{search_use_yn}
+		</if>
+		<if test="search_user_id != null and search_user_id != '' ">
+			AND USER_ID LIKE '%${search_user_id}%'
+		</if>
+		<if test="search_user_group != null and search_user_group != '' ">
+			AND USER_IDX5 = #{search_user_group}
+		</if>
+		<if test="search_user_nm != null and search_user_nm != '' ">
+			AND USER_NM LIKE '%${search_user_nm}%' 
+		</if>
+		<if test="search_group_id != null and search_group_id != '' ">
+			AND #{search_group_id} IN (SELECT VAL FROM dbo.FN_SPLIT_TBL(ASSIGN_GROUP_ID))
+		</if>
+	</select>
+	
+	<select id="edit" resultType="hashmap">
+	<![CDATA[
+		SELECT 	USER_ID, dbo.FN_DECT(USER_NM) AS USER_NM, SYSTEM_CD, dbo.FN_SYS_GROUP_NM(USER_ID, 1) AS PRE_GROUP_ID
+				, ASSIGN_GROUP_ID
+				, USE_YN
+				, LOGIN_FAIL_CNT
+		FROM 	WEBUSERM
+		WHERE 	USER_ID = #{0}
+		   AND SYSTEM_CD =#{1}
+	]]>
+	</select>	
+	
+	<insert id="insert" parameterType="com.gms.sys.vo.SYSUserVO">
+	<![CDATA[
+		INSERT INTO WEBUSERM (
+			USER_ID
+			, USER_NM
+			, SYSTEM_CD
+			, PASSWORD
+			, ASSIGN_GROUP_ID
+			, USE_YN
+			, LOGIN_FAIL_CNT
+ 			, ENC_SALT
+		) VALUES (
+			#{user_id}
+			, dbo.FN_ENCT(#{user_nm})
+			, #{system_cd}
+			, #{newPassword}
+			, #{assign_group_id}
+			, #{use_yn}
+			, #{login_fail_cnt}
+ 			, #{saltBase64} 
+		)
+	]]>	
+	</insert>
+	
+	<update id="update" parameterType="com.gms.sys.vo.SYSUserVO">
+	<![CDATA[
+		UPDATE 	WEBUSERM
+		   SET 	USER_NM = dbo.FN_ENCT(#{user_nm})
+			   	, SYSTEM_CD = #{system_cd}
+				, ASSIGN_GROUP_ID = #{assign_group_id}
+				, USE_YN = #{use_yn}
+				, LOGIN_FAIL_CNT = #{login_fail_cnt}
+	]]>
+			<if test="newPassword != null and newPassword != '' ">
+				, PASSWORD = #{newPassword}
+				, ENC_SALT = #{saltBase64} 
+			</if>
+	<![CDATA[		
+		 WHERE	USER_ID = #{p_user_id}	
+		    AND SYSTEM_CD = #{system_cd}
+	]]>
+	</update>
+	
+	<delete id="delete">
+	<![CDATA[
+		DELETE 	FROM WEBUSERM
+		 WHERE 	USER_ID = #{0}
+		     AND SYSTEM_CD = #{1}
+		     
+		DELETE 	FROM WEBUSERGROUPD
+		 WHERE 	USER_ID = #{0}
+		     AND SYSTEM_CD = #{1}
+
+	]]>	
+	</delete>
+	
+	<insert id="insert_group" parameterType="com.gms.sys.vo.SYSUserVO">
+	<![CDATA[
+		INSERT INTO WEBUSERGROUPD (
+			USER_ID
+			, SYSTEM_CD
+			, GROUP_ID
+			, CRT_DATE
+			, CRT_ID
+			, CRT_IP
+		) VALUES (
+			#{user_id}
+			, #{system_cd}
+			, #{group_id}
+			, GETDATE()
+			, #{username}
+			, #{user_ip}
+		)	
+	]]>
+	</insert>
+	
+	<delete id="delete_group">
+	<![CDATA[
+		DELETE
+		  FROM 	WEBUSERGROUPD
+		 WHERE 	USER_ID = #{0}
+		     AND SYSTEM_CD =  #{1}
+	]]>
+	</delete>
+	
+	<delete id="delete_group_priv">
+	<![CDATA[
+		DELETE 
+		  FROM 	WEBUSERPOWERD
+		 WHERE 	USER_ID = #{0}
+		   AND   SYSTEM_CD = #{1}
+		   AND 	ACCESS_PRIV IN (SELECT ACCESS_PRIV FROM WEBGROUPPOWERD WHERE GROUP_ID IN (SELECT GROUP_ID FROM WEBUSERGROUPD WHERE USER_ID = #{0} AND SYSTEM_CD = {1}))
+	]]>	
+	</delete>
+	
+	<select id="list_priv" resultType="hashmap">
+	<![CDATA[
+		SELECT 	A.SYSTEM_CD
+				, dbo.FN_GMS_CODE('SYSTEM_CD', A.SYSTEM_CD, '3') AS SYSTEM_NM 
+				, A.ACCESS_PRIV
+				, (SELECT ACCESS_NM FROM WEBACCESSPRIVM WHERE ACCESS_PRIV = A.ACCESS_PRIV)  AS ACCESS_NM 
+				, B.AUTHORITY 
+		  FROM 	WEBACCESSPRIVM A 
+		  LEFT OUTER JOIN WEBGROUPPOWERD B 
+			ON A.ACCESS_PRIV = B.ACCESS_PRIV 
+				AND B.GROUP_ID = #{group_id}
+		 WHERE  A.SYSTEM_CD IN (#{priv_system_cd}) 
+  		   AND 	A.ACCESS_PRIV NOT IN (SELECT ACCESS_PRIV FROM WEBUSERPOWERD WHERE USER_ID = #{p_user_id} )
+		 ORDER 
+		 	BY A.SYSTEM_CD, A.ACCESS_PRIV
+	]]>
+	</select>
+	
+	<insert id="insert_priv" parameterType="com.gms.sys.vo.SYSUserVO">
+	<![CDATA[
+		INSERT INTO WEBUSERPOWERD (
+			USER_ID
+			, ACCESS_PRIV
+			, SYSTEM_CD
+			, AUTHORITY
+			, CRT_DT
+			, CRT_ID
+			, CRT_IP
+		) 
+		SELECT 	#{user_id}
+				, ACCESS_PRIV
+				, SYSTEM_CD
+				, MAX(AUTHORITY)
+				, GETDATE()
+				, #{username}
+				, #{user_ip}
+		  FROM	WEBGROUPPOWERD
+		 WHERE	GROUP_ID IN ( SELECT GROUP_ID FROM SYSUSERGROUPD WHERE USER_ID = #{user_id} )
+		 GROUP  BY 	ACCESS_PRIV, SYSTEM_CD
+		 ORDER  BY 	SYSTEM_CD, ACCESS_PRIV
+	]]>
+	</insert>
+	
+	<delete id="delete_priv">
+	<![CDATA[
+		DELETE 
+		  FROM 	WEBUSERPOWERD
+		 WHERE 	USER_ID = #{0}
+	]]>	
+	</delete>
+	
+	<select id="list_granted_priv" resultType="hashmap">
+	<![CDATA[
+		SELECT 	A.SYSTEM_CD
+				, dbo.FN_GMS_CODE('SYSTEM_CD', A.SYSTEM_CD, '3') AS SYSTEM_NM 
+				, A.ACCESS_PRIV
+				, (SELECT ACCESS_NM FROM WEBACCESSPRIVM WHERE ACCESS_PRIV = A.ACCESS_PRIV)  AS ACCESS_NM
+				, B.AUTHORITY
+		  FROM 	WEBACCESSPRIVM A, WEBUSERPOWERD B
+		 WHERE 	A.ACCESS_PRIV = B.ACCESS_PRIV 
+		   AND 	B.USER_ID = #{p_user_id}
+		 ORDER 	
+		 	BY 	A.SYSTEM_CD, A.ACCESS_PRIV 
+	]]>
+	</select>
+	
+	<insert id="insert_auth" parameterType="com.gms.sys.vo.SYSUserVO">
+	<![CDATA[
+		INSERT INTO WEBUSERPOWERD (
+			USER_ID
+			, ACCESS_PRIV
+			, SYSTEM_CD
+			, AUTHORITY
+			, CRT_DT
+			, CRT_ID
+			, CRT_IP
+		) VALUES (
+			#{p_user_id}
+			, #{access_priv}
+			, #{priv_system_cd}
+			, #{authority}
+			, GETDATE()
+			, #{username}
+			, #{user_ip}
+		)
+	]]>
+	</insert>
+	
+	<insert id="insert_history" parameterType="com.gms.sys.vo.SYSUserVO">
+	<![CDATA[
+		INSERT INTO WEBUSERMODIFIEDM (
+			USER_ID
+			, SEQ
+			, USER_NM
+			, SYSTEM_CD
+			, STATUS
+			, MODIFY_CONTENTS 
+			, CRT_DT
+			, CRT_ID
+			, CRT_IP
+		) VALUES (
+			#{p_user_id}
+			, (SELECT ISNULL(MAX(SEQ), 0)+1 FROM WEBUSERMODIFIEDM WHERE USER_ID = #{p_user_id})
+			, #{user_nm}
+			, #{system_cd}
+			, #{status}
+			, #{revision_history}
+			, GETDATE()
+			, #{username}
+			, #{user_ip}
+		)
+	]]>
+	</insert>
+</mapper>
