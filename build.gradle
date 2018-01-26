@@ -26,8 +26,8 @@ jar {
 
 group = 'docker.gsp.sicc.co.kr:5000'
 
-docker {
-	name "${project.group}/${jar.baseName}"
+docker {	
+	name "${project.group}/${jar.baseName}:${jar.version}"
 	files jar.archivePath
 	buildArgs(['JAR_FILE': "${jar.archiveName}"])
 }
