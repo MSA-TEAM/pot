@@ -26,8 +26,8 @@ jar {
 
 group = 'docker.gsp.sicc.co.kr:5000'
 
-docker {
-	name "${project.group}/${jar.baseName}"
+docker {	
+	name "${project.group}/${jar.baseName}:${jar.version}"
 	files jar.archivePath
 	buildArgs(['JAR_FILE': "${jar.archiveName}"])
 }
@@ -39,7 +39,7 @@ repositories {
 	mavenCentral()
 }
 
-
+// hi
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
@@ -54,6 +54,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-devtools') // for jsp auto reload
 	
 	compile fileTree(dir: 'libs', include: '*.jar') // for sicc jar
+	compile fileTree(dir: 'libs', include: ['*.jar'])
+
+
 
 	compile('javax.servlet:jstl:1.2')  // jsp
 	compile('org.apache.tiles:tiles-jsp:3.0.4') // tiles
