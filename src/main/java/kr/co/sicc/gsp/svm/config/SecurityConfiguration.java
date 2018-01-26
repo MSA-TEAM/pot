@@ -3,18 +3,24 @@ package kr.co.sicc.gsp.svm.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.ReflectionSaltSource;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import kr.co.sicc.gsp.svm.gms.common.login.LoginProvider;
 import kr.co.sicc.gsp.svm.gms.common.login.SiccUserService;
+import kr.co.sicc.gsp.svm.gms.svm.service.SVMLoginProvider;
 import kr.co.sicc.gsp.svm.gms.svm.service.SVMSiccUserService;
 import kr.co.sicc.gsp.svm.sicc.security.CsrfSecurityRequestMatcher;
 import kr.co.sicc.gsp.svm.sicc.security.handler.SiccAccessDeniedHandler;
 import kr.co.sicc.gsp.svm.sicc.security.handler.SiccAuthenticationFailureHandler;
 import kr.co.sicc.gsp.svm.sicc.security.handler.SiccAuthenticationSuccessHandler;
 import kr.co.sicc.gsp.svm.sicc.security.handler.UnauthorizedEntryPoint;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -110,76 +116,48 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-//    	auth.authenticationProvider(svmSiccAuthenticationProvider());
-//    }
-//    
-//    @Bean
-//    public SvmSiccAuthenticationProvider svmSiccAuthenticationProvider(){
-//    	
-//    }
-//    
-//    @Bean
-//    public DefaultWebSecurityExpressionHandler DefaultWebSecurityExpressionHandler(){
-//    	return new DefaultWebSecurityExpressionHandler();
-//    }
-//    
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    	auth.authenticationProvider(svmSiccAuthenticationProvider());
+    }
+    
+    @Bean
+    public DefaultWebSecurityExpressionHandler DefaultWebSecurityExpressionHandler(){
+    	return new DefaultWebSecurityExpressionHandler();
+    }
+    
     @Bean 
     public SVMSiccUserService svmSiccUserService(){
     	return new SVMSiccUserService();
     }
-//    
-//    @Bean
-//    public SVMSiccAuthenticationProvider svmSiccAuthenticationProvider(){
-//    	return new SVMSiccAuthenticationProvider();
-//    }
-//    
+    
+    @Bean
+    public SVMLoginProvider svmSiccAuthenticationProvider(){
+    	return new SVMLoginProvider();
+    }
+    
     @Bean
     public SiccUserService siccUserService(){
     	return new SiccUserService();
     }
-//    
-//    @Bean
-//    public LoginProvider siccAuthenticationProvider(){
-//    	return new LoginProvider();
-//    }
-//    
-//    @Bean
-//    public ShaPasswordEncoder shaPasswordEncoder(){
-//    	ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder(256);
-//    	shaPasswordEncoder.setEncodeHashAsBase64(true);
-//    	return shaPasswordEncoder;
-//    }
-//    
-//    @Bean
-//    public ReflectionSaltSource reflectionSaltSource(){
-//    	ReflectionSaltSource reflectionSaltSource = new ReflectionSaltSource();
-//    	reflectionSaltSource.setUserPropertyToUse("salt");
-//    	return reflectionSaltSource;
-//    }  
     
-
-    /*
-<security:authentication-manager alias="authenticationManager">
-<security:authentication-provider ref="svmSiccAuthenticationProvider"/>
-</security:authentication-manager>
-
-<bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
-<bean id="svmSiccUserService" class="com.gms.svm.service.SVMSiccUserService"/>
-<bean id="svmSiccAuthenticationProvider" class="com.gms.svm.service.SVMLoginProvider"/>	
-<bean id="siccUserService" class="com.gms.common.login.SiccUserService"/>
-<bean id="siccAuthenticationProvider" class="com.gms.common.login.LoginProvider"/>
-
-<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
-	<constructor-arg value="256"/>
-	<property name="encodeHashAsBase64" value="true"/>
-</bean>
-
-<bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource">
-	<property name="userPropertyToUse" value="salt"/>
-</bean>    
-*/   
-
+    @Bean
+    public LoginProvider siccAuthenticationProvider(){
+    	return new LoginProvider();
+    }
+    
+    @Bean
+    public ShaPasswordEncoder shaPasswordEncoder(){
+    	ShaPasswordEncoder shaPasswordEncoder = new ShaPasswordEncoder(256);
+    	shaPasswordEncoder.setEncodeHashAsBase64(true);
+    	return shaPasswordEncoder;
+    }
+    
+    @Bean
+    public ReflectionSaltSource reflectionSaltSource(){
+    	ReflectionSaltSource reflectionSaltSource = new ReflectionSaltSource();
+    	reflectionSaltSource.setUserPropertyToUse("salt");
+    	return reflectionSaltSource;
+    }  
 
 }
