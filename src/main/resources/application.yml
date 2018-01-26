@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: VOL
   devtools:
     livereload:
       enabled: true  # for jsp auto reload

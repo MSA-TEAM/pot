@@ -29,8 +29,10 @@ node {
         echo "Repository : ${repository}/${reference}"
 		echo "${after} => ${before}"
     }
-    	
-    checkout scm
+
+    stage('Checkout') {
+        checkout scm
+    }
 
     stage('Test') {
         sh './gradlew check || true'
