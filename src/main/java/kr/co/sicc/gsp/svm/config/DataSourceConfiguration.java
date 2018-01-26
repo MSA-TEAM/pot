@@ -31,7 +31,7 @@ public class DataSourceConfiguration {
         sessionFactory.setMapperLocations(resolver.getResources("classpath:kr/co/sicc/gsp/svm/gms/svm/dao/mapper/*.xml"));        
         return sessionFactory.getObject();        
     }
-
+ 
     @Bean
     public SqlSessionTemplate sqlSession(SqlSessionFactory sqlSessionFactory) throws Exception {
         final SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
