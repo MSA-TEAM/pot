@@ -8,25 +8,13 @@ spring:
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp
-#  datasource:
-#    type: org.apache.tomcat.jdbc.pool.DataSource
-#    driverClassName: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/postgres?autoReconnect=true&useSSL=false
-#    username: postgres
-#    #password: ENC(2L3MvBFx+sCd0DQ79sMY6wR0bJvSGq3R)
-#    password: New1234!
+
   datasource:
-    type: org.springframework.jdbc.datasource.SimpleDriverDataSource
-    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://203.255.241.196:1433;DatabaseName=AG2018GMS
-    username: siccgms    
-    password: siccgms
-#  datasource:
-#    type: org.springframework.jdbc.datasource.SimpleDriverDataSource
-#    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
-#    url: jdbc:postgresql://localhost:5432/postgres
-#    username: postgres    
-#    password: admin    
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://sport-saas-psql.cf37vedvxld3.ap-northeast-2.rds.amazonaws.com;DatabaseName=sportsaas
+    username: root    
+    password: siccsports 
     
 # LOGGING
 #logging.config: classpath:logback/logback-spring.xml  # resource/logback-spring.xml에 위치하여 위치 자동 인식 
@@ -43,7 +31,7 @@ spring:
 #    static-locations: classpath:/static/
 
 mybatis:
-  mapper-locations: classpath:mappers/**/*.xml
+  mapper-locations: classpath:mapper/**/*.xml
   configuration:
     lazyLoadingEnabled: true
     aggressiveLazyLoading: false
