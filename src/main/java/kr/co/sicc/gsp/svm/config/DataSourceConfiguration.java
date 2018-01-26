@@ -12,13 +12,13 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableConfigurationProperties
-//@MapperScan(basePackages="com.sicc.admin.demo.dao")
-//@MapperScan(value={"kr.co.sicc.gsp.svm.sicc.menu.mapper", "kr.co.sicc.gsp.svm.gms.svm.dao.mapper"})
-@MapperScan(value={"kr.co.sicc.gsp.svm.gms.svm.dao.mapper"})
+@MapperScan(basePackages="kr.co.sicc.gsp.svm.gms.svm.dao")
+//@MapperScan(value={"kr.co.sicc.gsp.svm.sicc.menu.mapper", "kr.co.sicc.gsp.svm.gms.svm.dao.mapper"})//			
 @EnableTransactionManagement
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class })
 public class DataSourceConfiguration {
@@ -27,17 +27,16 @@ public class DataSourceConfiguration {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-//        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//        sessionFactory.setMapperLocations(resolver.getResources("classpath:mappers/**/*.xml"));
-        return sessionFactory.getObject();
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        sessionFactory.setMapperLocations(resolver.getResources("classpath:kr/co/sicc/gsp/svm/gms/svm/dao/mapper/*.xml"));        
+        return sessionFactory.getObject();        
     }
 
     @Bean
     public SqlSessionTemplate sqlSession(SqlSessionFactory sqlSessionFactory) throws Exception {
         final SqlSessionTemplate sqlSessionTemplate = new SqlSessionTemplate(sqlSessionFactory);
         return sqlSessionTemplate;
-    }
-    
+    }    
 }
 
 
