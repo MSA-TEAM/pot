@@ -71,5 +71,5 @@ dependencies {
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	//testCompile('com.microsoft.sqlserver:mssql-jdbc')
-	//runtime('org.postgresql:postgresql:42.1.1')
+	runtime('org.postgresql:postgresql:42.1.1')
 }
