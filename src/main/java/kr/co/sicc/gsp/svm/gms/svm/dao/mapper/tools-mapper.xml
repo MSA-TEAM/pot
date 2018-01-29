@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gms.svm.dao.SVMToolsDAO">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.svm.dao.SVMToolsDAO">
 
 	<sql id="isCode_find" >
 		-- include isCode_find [주석]
@@ -94,7 +94,7 @@
 	
 	<select id="tco" resultType="hashmap" >
 	<![CDATA[ 
-		-- mapper >> com.gms.svm.dao.SVMToolsDAO
+		-- mapper >> kr.co.sicc.gsp.svm.gms.svm.dao.SVMToolsDAO
 		  
 	    SELECT MAJOR_CD, MINOR_CD, CODE_NM1, CODE_NM2, CODE_NM3, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5 , SPORT_CD  , S_CODE_NM1 , S_CODE_NM2 , S_CODE_NM3 , T_CODE_NM1 , T_CODE_NM2 , T_CODE_NM3 
 		  FROM TCOCODEM

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gms.svm.photo.SVMPhotoDAO">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.svm.photo.SVMPhotoDAO">
 
 	<select id="read" parameterType="String" resultType="hashmap">
 	<![CDATA[
@@ -22,7 +22,7 @@
 	]]>
 	</select>
     
-    <insert id="insert" parameterType="com.gms.svm.photo.SVMPhotoVO">
+    <insert id="insert" parameterType="kr.co.sicc.gsp.svm.gms.svm.photo.SVMPhotoVO">
     <![CDATA[
         INSERT INTO SVMPHOTOM (
                AD_NO,
@@ -79,7 +79,7 @@
 	]]>
 	</select>
     
-    <insert id="insertPassport" parameterType="com.gms.svm.photo.SVMPhotoVO">
+    <insert id="insertPassport" parameterType="kr.co.sicc.gsp.svm.gms.svm.photo.SVMPhotoVO">
     <![CDATA[
         INSERT INTO SVMPHOTOM (
                AD_NO,

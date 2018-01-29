@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.gms.svm.dao.SVMVolDAO">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.svm.dao.SVMVolDAO">
 	
 	<select id="selectRegiNo" resultType="String">
 		SELECT dbo.FN_SVM_GET_REGI_NO(#{birth_date},#{gender}) AS REGI_NO
 	</select>
 	
-	<delete id="deleteInfor" parameterType="com.gms.svm.vo.SVMInfoVO">
+	<delete id="deleteInfor" parameterType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMInfoVO">
 	<![CDATA[
 		DELETE SVMUSERINFORM
 	]]>
@@ -18,7 +18,7 @@
 	
 	</delete>
 	
-	<select id="selectInfo" resultType="com.gms.svm.vo.SVMInfoVO">
+	<select id="selectInfo" resultType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMInfoVO">
 			SELECT	  
 				    AD_NO
 				   ,AREA
@@ -82,7 +82,7 @@
 	
 	</select>
 	
-	<select id="select" resultType="com.gms.svm.vo.SVMVolVO">
+	<select id="select" resultType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMVolVO">
 		SELECT
 			 VM.AD_NO
 			,VM.REGI_NO
@@ -209,7 +209,7 @@
 		WHERE VM.AD_NO =#{ad_no}
 	</select>
 	
-	<insert id="insert" parameterType="com.gms.svm.vo.SVMVolVO" useGeneratedKeys="true">
+	<insert id="insert" parameterType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMVolVO" useGeneratedKeys="true">
 		<![CDATA[
 			INSERT INTO SVMVOLUNTEERM
 			           (
@@ -407,12 +407,12 @@
 					)
 					]]>
 	
-		<selectKey keyColumn="AD_NO" keyProperty="ad_no" order="AFTER" resultType="com.gms.svm.vo.SVMVolVO">
+		<selectKey keyColumn="AD_NO" keyProperty="ad_no" order="AFTER" resultType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMVolVO">
 				SELECT CONVERT(VARCHAR,AD_NO) AS AD_NO FROM SVMVOLUNTEERM WHERE REGI_NO =  #{regi_no}
 		</selectKey>
 	</insert>
 	
-	<insert id="insertInfor" parameterType="com.gms.svm.vo.SVMVolVO">
+	<insert id="insertInfor" parameterType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMVolVO">
 	           WITH t AS
 				(
 				<foreach collection="areaList" item="data" index="index" open="" separator="" close="">
@@ -479,7 +479,7 @@
 	</insert>
 	
 	
-	<update id="update" parameterType="com.gms.svm.vo.SVMVolVO">          
+	<update id="update" parameterType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMVolVO">          
 			UPDATE SVMVOLUNTEERM
 			<set> 
 				   	   UDT_DT                  =  	  GETDATE()                         
