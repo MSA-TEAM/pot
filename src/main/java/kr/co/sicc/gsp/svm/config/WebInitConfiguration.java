@@ -12,7 +12,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @Configuration
 public class WebInitConfiguration implements ServletContextInitializer{
-	private static final String CONFIG_LOCATION = "ckr.co.sicc.gsp.svm.config";
+	private static final String CONFIG_LOCATION = "kr.co.sicc.gsp.svm.config";
 	
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
