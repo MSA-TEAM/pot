@@ -6,37 +6,40 @@
 
 	<select id="authCheck" resultType="String">
 		SELECT 
-			--EMAIL,
-			 EMAIL_DUMMY
-			--, AD_NO, EMAIL_AUTH_YN, PASSWORD, CHNG_PW_YN, BIRTH_DATE
+			--EMAIL_ID,
+			 EMAIL_ID_AUTH_ID
+			--, AD_NO, EMAIL_ID_AUTH_YN, PASSWORD, PASSWORD_CHG_YN, BIRTH_DT
  		FROM 
- 		 	SVMUSERLOGINM
- 		WHERE 
- 			EMAIL = #{targetEmail}
+ 		 	SVMUSERM
+	    WHERE TENANT_ID	= #{tenantId}
+	      AND CP_CD		= #{cpCd}
+	      AND EMAIL_ID 	= #{emailId}
 	</select>
 	
 	<update id="authSuccess">
 		<![CDATA[
 		UPDATE
-			 SVMUSERLOGINM
+			 SVMUSERM
 		SET 
-			EMAIL_AUTH_YN = 'Y',
-			UDT_DT = GETDATE()
-		WHERE 
-			EMAIL = #{targetEmail}
+			EMAIL_ID_AUTH_YN = 'Y',
+			UDT_DATE = now()
+	    WHERE TENANT_ID	= #{tenantId}
+	      AND CP_CD		= #{cpCd}
+	      AND EMAIL_ID 	= #{emailId}
 		]]>
 	</update>
 	
 	<update id="updateEmailDummy" parameterType="hashmap">
 		<![CDATA[
 		UPDATE
-			 SVMUSERLOGINM
+			 SVMUSERM
 		SET 
-			EMAIL_DUMMY = #{dummyKey},
-			UDT_DT = GETDATE(),
+			EMAIL_ID_AUTH_ID = #{dummyKey},
+			UDT_DATE = now(),
 			UDT_IP = #{ip}
-		WHERE 
-			EMAIL = #{targetEmail}
+	    WHERE TENANT_ID	= #{tenantId}
+	      AND CP_CD		= #{cpCd}
+	      AND EMAIL_ID 	= #{emailId}
 		]]>
 	</update>
 

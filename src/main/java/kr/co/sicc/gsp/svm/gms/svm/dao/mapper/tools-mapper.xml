@@ -9,33 +9,58 @@
 <!-- 		<choose> -->
 <!-- 			<when test="code_find != null and code_find != ''"> -->
 				<choose>
+					<when test='"TENANT_ID".equals(code_find)'>
+						AND	TENANT_ID = ${code_find} 
+					</when>
+					<when test='"CP_CD".equals(code_find)'>
+						AND	CP_CD = ${code_find} 
+					</when>
 					<when test='"MAJOR_CD".equals(code_find)'>
 						AND	MAJOR_CD = ${code_find} 
 					</when>
 					<when test='"MINOR_CD".equals(code_find)'>
 						AND MINOR_CD = ${code_find}
 					</when>
-					<when test='"CODE_NM1".equals(code_find)'>
-						AND CODE_NM1 = ${code_find}
+					<when test='"CODE_NM".equals(code_find)'>
+						AND CODE_NM = ${code_find}
 					</when>
-					<when test='"CODE_NM2".equals(code_find)'>
-						AND CODE_NM2 = ${code_find}
+					<when test='"L1_CODE_NM".equals(code_find)'>
+						AND L1_CODE_NM = ${code_find}
 					</when>
-					<when test='"CODE_NM3".equals(code_find)'>
-						AND CODE_NM3 = ${code_find}
+					<when test='"L2_CODE_NM".equals(code_find)'>
+						AND L2_CODE_NM = ${code_find}
 					</when>
-					<when test='"SPORT_CD".equals(code_find)'>
-						AND SPORT_CD = ${code_find}
+					<when test='"L3_CODE_NM".equals(code_find)'>
+						AND L3_CODE_NM = ${code_find}
 					</when>
-					<when test='"IDX1".equals(code_find)'>
-						AND IDX1 = ${code_find}
+					<when test='"L4_CODE_NM".equals(code_find)'>
+						AND L4_CODE_NM = ${code_find}
 					</when>
-					<when test='"IDX2".equals(code_find)'>
-						AND IDX2 = ${code_find}
+					<when test='"DISPLAY_CD".equals(code_find)'>
+						AND DISPLAY_CD = ${code_find}
 					</when>
-					<when test='"IDX3".equals(code_find)'>
-						AND IDX3 = ${code_find}
+					<when test='"HIDE_YN".equals(code_find)'>
+						AND HIDE_YN = ${code_find}
 					</when>
+					<when test='"SPORT_ORD".equals(code_find)'>
+						AND SPORT_ORD = ${code_find}
+					</when>
+					<when test='"CODE_IDX1".equals(code_find)'>
+						AND CODE_IDX1 = ${code_find}
+					</when>
+					<when test='"CODE_IDX2".equals(code_find)'>
+						AND CODE_IDX2 = ${code_find}
+					</when>
+					<when test='"CODE_IDX3".equals(code_find)'>
+						AND CODE_IDX3 = ${code_find}
+					</when>
+					<when test='"CODE_IDX4".equals(code_find)'>
+						AND CODE_IDX4 = ${code_find}
+					</when>
+					<when test='"CODE_IDX5".equals(code_find)'>
+						AND CODE_IDX5 = ${code_find}
+					</when>
+
 					<otherwise>
 						-- 주석 [ isCode_find >> otherwise ]
 					</otherwise>				
@@ -44,7 +69,7 @@
 
 	<select id="svmCodeList" resultType="hashmap" >
 		SELECT 
-				MAJOR_CD, MINOR_CD, CODE_NM1, CODE_NM2, CODE_NM3, CODE_IDX1, CODE_IDX2, CODE_IDX3
+				MAJOR_CD, MINOR_CD, CODE_NM, L1_CODE_NM, L2_CODE_NM, L3_CODE_NM, L4_CODE_NM, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5
 		  FROM 
 		  		SVMCODEM
 		<where>
@@ -52,31 +77,39 @@
 					<choose>
 			    		<when test='!"".equals(etc_cond2) and etc_cond2 != null '>			    	
 						-- when절 [주석]
-		    			AND MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE MAJOR_CD = ( SELECT MINOR_CD FROM SVMCODEM WHERE CODE_FIND = #{etc_cond2} AND MAJOR_CD = '000' ) AND MINOR_CD = #{code_find})
+		    			AND MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE MAJOR_CD = ( SELECT MINOR_CD FROM SVMCODEM WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND CODE_FIND = #{etc_cond2} AND MAJOR_CD = '000' ) AND MINOR_CD = #{code_find})
 		    			</when>
 		    			<otherwise>
 		    			-- otherwise절 [주석]
-				    	AND MAJOR_CD = ( SELECT MINOR_CD FROM SVMCODEM WHERE MAJOR_CD = '000' AND CODE_FIND = #{code_find} )
+				    	AND MAJOR_CD = ( SELECT MINOR_CD FROM SVMCODEM WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND MAJOR_CD = '000' AND CODE_FIND = #{code_find} )
 				    	<if test='"".equals(etc_cond1) or etc_cond1 == null '>
 					    	<if test='"CITY_CD".equals(code_find)'>
 				    		  AND code_idx1 = (
 									          SELECT PROVINSI_CD
 									          FROM SVMVOLUNTEERM
-									          WHERE AD_NO = #{ad_no}
+									          WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD		= #{cp_cd} 
+												AND AD_NO 		= #{ad_no}
 									          )
 					    	</if>
 					    	<if test='"DISTRICT_CD".equals(code_find)'>
 				    		  AND code_idx1 = (
 									          SELECT CITY_CD
 									          FROM SVMVOLUNTEERM
-									          WHERE AD_NO = #{ad_no}
+									          WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD		= #{cp_cd} 
+												AND AD_NO 		= #{ad_no}
 									          )
 					    	</if>
 					    	<if test='"VILLAGE_CD".equals(code_find)'>
 				    		  AND code_idx1 = (
 									          SELECT DISTRICT_CD
 									          FROM SVMVOLUNTEERM
-									          WHERE AD_NO = #{ad_no}
+									          WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD		= #{cp_cd} 
+												AND AD_NO 		= #{ad_no}
 									          )
 					    	</if>
 				    	</if>
@@ -91,86 +124,14 @@
 		</if>
 	</select>
 	
-	
-	<select id="tco" resultType="hashmap" >
-	<![CDATA[ 
-		-- mapper >> kr.co.sicc.gsp.svm.gms.svm.dao.SVMToolsDAO
-		  
-	    SELECT MAJOR_CD, MINOR_CD, CODE_NM1, CODE_NM2, CODE_NM3, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5 , SPORT_CD  , S_CODE_NM1 , S_CODE_NM2 , S_CODE_NM3 , T_CODE_NM1 , T_CODE_NM2 , T_CODE_NM3 
-		  FROM TCOCODEM
-		 WHERE MAJOR_CD = (SELECT MINOR_CD
-		 					 FROM TCOCODEM
-		 					WHERE CODE_IDX1 = #{code_find})
-		   AND HIDE_YN != 'Y'	  
-	]]>
-		<if test="etc_cond1 != null and etc_cond1 != ''">
-	   	  ${etc_cond1}		
-		</if>
-		<if test="order != null and order != ''">
-	   	  ORDER BY ${order}		
-		</if>
-	</select>
-	
-	<select id="categoryList" resultType="hashmap" >
-	<![CDATA[  
-	    SELECT CATEGORY_CD 		AS MINOR_CD, 
-	    	   CATEGORY_CD_NM 	AS CATEGORY_CD_NM, 
-	    	   CATEGORY_NM 		AS CODE_NM1,
-	    	   CATEGORY_NM 		AS CODE_NM2
-		  FROM ACRCATEGORYM
-		 WHERE 1=1 
-	]]>
-		<if test="etc_cond1 != null and etc_cond1 != ''">
-	   	  ${etc_cond1}		
-		</if>
-		<if test="order != null and order != ''">
-	   	  ORDER BY ${order}		
-		</if>
-	</select>
-	
-	<select id="functionList" resultType="hashmap" >
-	<![CDATA[  
-	    SELECT FUNCTION_CD 		AS MINOR_CD, 
-	    	   FUNCTION_CD_NM 	AS FUNCTION_CD_NM, 
-	    	   FUNCTION_NM 		AS CODE_NM1,
-	    	   FUNCTION_NM 		AS CODE_NM2,
-	    	   CATEGORY_CD		AS CODE_IDX1
-		  FROM ACRFUNCTIONM
-		 WHERE 1=1 
-	]]>
-		<if test="etc_cond1 != null and etc_cond1 != ''">
-	   	  ${etc_cond1}		
-		</if>
-		<if test="order != null and order != ''">
-	   	  ORDER BY ${order}		
-		</if>
-	</select>
-	
-	<select id="orgList" resultType="hashmap" >
-	<![CDATA[  
-	    SELECT ORG_CD 		AS MINOR_CD, 
-	    	   ORG_CD_NM 	AS ORG_CD_NM, 
-	    	   ORG_NM 		AS CODE_NM1,
-	    	   ORG_NM 		AS CODE_NM2,
-	    	   R_CATEGORY_CD AS CODE_IDX1
-		  FROM ACRORGM
-		 WHERE 1=1 
-	]]>
-		<if test="etc_cond1 != null and etc_cond1 != ''">
-	   	  ${etc_cond1}		
-		</if>
-		<if test="order != null and order != ''">
-	   	  ORDER BY ${order}		
-		</if>
-	</select>
-
 	<select id="changeAddr" resultType="hashmap" >
 		
-		SELECT MAJOR_CD, MINOR_CD, CODE_NM1, CODE_NM2, CODE_NM3, CODE_IDX1, CODE_IDX2, CODE_IDX3
+		SELECT MAJOR_CD, MINOR_CD, CODE_NM, L1_CODE_NM, L2_CODE_NM, L3_CODE_NM, L4_CODE_NM, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5
 		  FROM 
 		  		SVMCODEM
 		 WHERE 
-		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE CODE_FIND = #{code_find} AND MAJOR_CD = '000')
+		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND CODE_FIND = #{code_find} AND MAJOR_CD = '000')
 		<where>
 			 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
 			AND CODE_IDX = #{etc_cond1}
@@ -199,11 +160,12 @@
 	
 	<select id="changeExperience" resultType="hashmap" >
 		
-		SELECT MAJOR_CD, MINOR_CD, CODE_NM1, CODE_NM2, CODE_NM3, CODE_IDX1, CODE_IDX2, CODE_IDX3
+		SELECT MAJOR_CD, MINOR_CD, CODE_NM, L1_CODE_NM, L2_CODE_NM, L3_CODE_NM, L4_CODE_NM, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5
 		  FROM 
 		  		SVMCODEM
 		 WHERE 
-		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE CODE_FIND = #{code_find} AND MAJOR_CD = '000')
+		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND CODE_FIND = #{code_find} AND MAJOR_CD = '000')
 		 
    		 AND	 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
 		 AND CODE_IDX2 = #{etc_cond1}

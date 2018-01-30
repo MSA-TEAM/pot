@@ -75,46 +75,53 @@
 <!-- 		</if> -->
 <!-- 	</select> -->
 	
-	<select id="edit" resultType="hashmap">
-	<![CDATA[
-		SELECT 	EMAIL, dbo.FN_DECT(USER_NM) AS USER_NM, SYSTEM_CD, dbo.FN_SYS_GROUP_NM(EMAIL, 1) AS PRE_GROUP_ID
-				, ASSIGN_GROUP_ID
-				, USE_YN
-				, LOGIN_FAIL_CNT
-		FROM 	SVMUSERLOGINM
-		WHERE 	EMAIL = #{0}
-	]]>
-	</select>	
-	
 	<insert id="insert" parameterType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMUserVO">
-		INSERT INTO SVMUSERLOGINM (
-			  EMAIL
-			, EMAIL_DUMMY
-			, EMAIL_AUTH_YN
+		INSERT INTO SVMUSERM (
+
+			  TENANT_ID
+			, CP_CD
+			, EMAIL_ID
 			, PASSWORD
-			, CHANGE_PWD_YN
-			, BIRTH_DATE
 			, USE_YN
- 			, PWD_SALT
+			, EMAIL_ID_AUTH_ID
+			, EMAIL_ID_AUTH_YN
+			, PASSWORDWD_CHG_YN
+			, BIRTH_DT
  			, SUBMIT_YN
- 			, SAVE_TAB_CD 
+ 			, SUBMIT_DATE
+			, SUBMIT_TAB_ID
  			, ASSIGN_GROUP_ID
- 			,CRT_DT
-            ,CRT_IP
+			, ENC_SALT	
+ 			, CRT_DATE
+            , CRT_ID
+            , CRT_IP
             
 		) VALUES (
-			#{email}
-			, #{email_dummy}
-			, #{email_auth_yn}
-			, #{newPassword}
-			, #{change_pwd_yn}
-			, #{birth_date}
+			  #{tenant_id}
+			, #{cp_cd}
+			, #{email_id}
+			, #{password}
 			, #{use_yn}
- 			, #{saltBase64}
- 			, #{submit_yn}
- 			, #{save_tab_cd}
+			, #{email_id_auth_id}
+			, #{email_id_auth_yn}
+			, #{password_chg_yn}
+			, #{birth_dt}
+			, #{submit_yn}
+ 			, #{submit_date}
+ 			, #{submit_tab_id}
  			, #{assign_group_id}
- 			, GETDATE()  
+ 			, #{saltBase64}
+ 			, now()  
+
+ 			<choose>
+			   <when test="user_id == null">
+				   ,isNull('','')
+			   </when>
+			   <otherwise> 
+				   ,isNull(#{user_id},'')
+			   </otherwise>
+		   </choose>
+
  			<choose>
 			   <when test="user_ip == null">
 				   ,isNull('','')
@@ -128,8 +135,7 @@
 	
 	<update id="update" parameterType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMUserVO">
 	<![CDATA[
-		UPDATE 	SVMUSERLOGINM
-		   	
+		UPDATE 	SVMUSERLOGINM	   	
 	]]>
 		   	<set>
 		   		<if test="submit_yn != null and submit_yn != '' ">
@@ -138,60 +144,79 @@
 		   		<if test="use_yn != null and use_yn != '' ">
 		   		  USE_YN = #{use_yn},
 		   		</if>
-			   	<if test="email_auth_yn != null and email_auth_yn != '' "> 	
-			   		  EMAIL_AUTH_YN = #{email_auth_yn},
+			   	<if test="email_id_auth_yn != null and email_id_auth_yn != '' "> 	
+			   		  EMAIL_ID_AUTH_YN = #{email_auth_yn},
 			    </if>
-			   	<if test="change_pwd_yn != null and change_pwd_yn != '' "> 	
-			   		  CHANGE_PWD_YN = #{change_pwd_yn},
+			   	<if test="password_chg_yn != null and password_chg_yn != '' "> 	
+			   		  PASSWORD_CHG_YN = #{password_chg_yn},
 			    </if>
-			   	<if test="birth_date != null and birth_date != '' "> 	
-			   		  BIRTH_DATE = #{birth_date},
+			   	<if test="birth_dt != null and birth_dt != '' "> 	
+			   		  BIRTH_DT = #{birth_dt},
 			    </if>
-			    <if test="save_tab_cd != null and save_tab_cd != '' ">
-			   		  SAVE_TAB_CD = #{save_tab_cd},
+			    <if test="save_tab_id != null and save_tab_id != '' ">
+			   		  SAVE_TAB_ID = #{save_tab_id},
 			    </if>
 				<if test="newPassword != null and newPassword != '' ">
 					  PASSWORD = #{newPassword},
 					  PWD_SALT = #{saltBase64}, 
 				</if>
-				UDT_DT = GETDATE(),
+				UDT_DT = now(),
+				
 				<choose>
-			   <when test="user_ip == null">
-				   UDT_IP = isNull('','')
-			   </when>
-			   <otherwise>
-				   UDT_IP = isNull(#{user_ip},'')
-			   </otherwise>
+				   <when test="user_id == null">
+					   UDT_ID = isNull('','')
+				   </when>
+				   <otherwise>
+					   UDT_ID = isNull(#{user_id},'')
+				   </otherwise>
+			    </choose>
+				  
+				<choose>
+					<when test="user_ip == null">
+					   ,UDT_IP = isNull('','')
+				    </when>
+				    <otherwise>
+					   ,UDT_IP = isNull(#{user_ip},'')
+					</otherwise>
 			   </choose>
+			    
 			   <if test='"Y".equals(submit_yn)'>
-				   ,SUBMIT_DT = GETDATE()
+				   ,SUBMIT_DATE = now()
 			   </if>
 			</set>
 	<![CDATA[		
-		 WHERE	EMAIL = #{email}	
+		 WHERE TENANT_ID	= #{tenant_id}
+  		   AND CP_CD		= #{cp_cd} 
+		   AND EMAIL_ID 	= #{email_id}	
 	]]>
 	</update>
 	
 	<delete id="delete">
-	<![CDATA[
-		DELETE 	FROM SVMUSERLOGINM
-		 WHERE 	EMAIL = #{0}
-	]]>	
+		<![CDATA[
+			DELETE 	FROM SVMUSEM
+			 WHERE TENANT_ID	= #{tenant_id}
+	  		   AND CP_CD		= #{cp_cd} 
+			   AND EMAIL_ID 	= #{email_id}	
+		]]>	
 	</delete>
 	
 	<select id="chk_email" resultType="int">
 		<![CDATA[
 			SELECT COUNT(*)
-			FROM SVMUSERLOGINM
-			WHERE EMAIL = #{0}
+			FROM SVMUSERM
+			WHERE ENANT_ID	= #{0}
+  		    AND CP_CD		= #{1} 
+			AND EMAIL 		= #{2}
 		]]>
 	</select>
 	
 	<select id="chk_email_auth" resultType="String">
 		<![CDATA[
 			SELECT EMAIL_AUTH_YN
-			FROM SVMUSERLOGINM
-			WHERE EMAIL = #{0}
+			FROM SVMUSERM
+		WHERE ENANT_ID		= #{0}
+  		    AND CP_CD		= #{1} 
+			AND EMAIL 		= #{2}
 		]]>
 	</select>
 <!-- 	<insert id="insert_group" parameterType="com.gms.svm.vo.SVMUserVO"> -->
