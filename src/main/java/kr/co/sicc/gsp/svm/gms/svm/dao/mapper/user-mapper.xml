@@ -204,19 +204,19 @@
 		<![CDATA[
 			SELECT COUNT(*)
 			FROM SVMUSERM
-			WHERE ENANT_ID	= #{0}
-  		    AND CP_CD		= #{1} 
-			AND EMAIL 		= #{2}
+			WHERE TENANT_ID	= #{param1}
+  		    AND CP_CD		= #{param2} 
+			AND EMAIL_ID 	= #{param3}
 		]]>
 	</select>
 	
 	<select id="chk_email_auth" resultType="String">
 		<![CDATA[
-			SELECT EMAIL_AUTH_YN
+			SELECT EMAIL_ID_AUTH_YN
 			FROM SVMUSERM
-		WHERE ENANT_ID		= #{0}
-  		    AND CP_CD		= #{1} 
-			AND EMAIL 		= #{2}
+		WHERE TENANT_ID		= #{param1}
+  		    AND CP_CD		= #{param2} 
+			AND EMAIL_ID	= #{param3}
 		]]>
 	</select>
 <!-- 	<insert id="insert_group" parameterType="com.gms.svm.vo.SVMUserVO"> -->
