@@ -25,7 +25,7 @@
 			<form:hidden path="kind" />
 			<form:hidden path="birth_date" />
 			<form:hidden path="duplicate_check_yn" />
-			<form:hidden path="email_auth_yn" />
+			<form:hidden path="email_id_auth_yn" />
 			<input type="hidden" name="loginRedirect" value="${loginRedirect}" />
 			
 <!--▼ form_register table_write-->
@@ -218,7 +218,7 @@
 			$('#svmUserVo').find('.tab_01_contents:eq(1)').hide();
 // 			$("#loginEmail").prop("name","");
 // 			$("#loginPassword").prop("name","");
-			$("#email_id").prop("name","email_id");
+			$("#email").prop("name","email");
 			$("#regist_password").prop("name","password");
 		}
 		else if(sel_tab == '<spring:message code="svm.tab.ModifyApplication"/>'){
@@ -227,7 +227,7 @@
 // 			$("#loginEmail").prop("name","email");
 // 			$("#loginPassword").prop("name","password");
 			$("#regist_password").prop("name","");
-			$("#email_id").prop("name","");
+			$("#email").prop("name","");
 		}
 		$('.tab_01 li.on').removeClass();
 		$(selector).addClass('on');
@@ -266,7 +266,7 @@
 		} else {
 			// custom validation 정의
 		 	$.validator.addMethod(
-			        'email_id', function (value, element) {
+			        'email', function (value, element) {
 			        	var isValid = false;
 			        	if(verifyemail(value)){
 			        		isValid = true;
@@ -311,15 +311,15 @@
 			$('#svmUserVo').validate({
 				onfocusout: false,
 				rules: {
-					email_id		  : { required: true , email:true },
+					email		  : { required: true , email:true },
 					password		  : { required: true , minlength : 8},
 					password_confirm  : { required: true, isConfirmPassword : true , minlength : 8},
 					dateOfBirth_day   : { required : true , isSelectDate : true },
 					dateOfBirth_month : { required : true , isSelectMonth : true },
 					dateOfBirth_year  : { required : true , isSelectYear : true }
 				}, messages: {
-					email_id: {
-						required	:  '<spring:message code="svm.message.mandatory_email" />',
+					email: {
+						required	:  '<spring:message code="svm.message.mandatory_email" />'
 					},
 					password: {
 						required	:  '<spring:message code="sys.user.message.input_password" />',
@@ -403,7 +403,7 @@
 // 			return false;
 // 		}
 		if(pw1 != ""){
-			var checkpwd = passwordCheck($("#email_id").val(), pw1, pw1 , pw2 );
+			var checkpwd = passwordCheck($("#email").val(), pw1, pw1 , pw2 );
 			
 			if(checkpwd != ''){
 				switch(checkpwd){
