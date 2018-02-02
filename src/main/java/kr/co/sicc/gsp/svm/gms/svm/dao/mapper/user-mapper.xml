@@ -85,11 +85,11 @@
 			, USE_YN
 			, EMAIL_ID_AUTH_ID
 			, EMAIL_ID_AUTH_YN
-			, PASSWORDWD_CHG_YN
+			, PASSWORD_CHG_YN
 			, BIRTH_DT
  			, SUBMIT_YN
  			, SUBMIT_DATE
-			, SUBMIT_TAB_ID
+			, SAVE_TAB_ID
  			, ASSIGN_GROUP_ID
 			, ENC_SALT	
  			, CRT_DATE
@@ -108,26 +108,26 @@
 			, #{birth_dt}
 			, #{submit_yn}
  			, #{submit_date}
- 			, #{submit_tab_id}
+ 			, #{save_tab_id}
  			, #{assign_group_id}
  			, #{saltBase64}
  			, now()  
 
  			<choose>
-			   <when test="user_id == null">
-				   ,isNull('','')
+			   <when test="email_id == null">
+				   ,coalesce('','')
 			   </when>
 			   <otherwise> 
-				   ,isNull(#{user_id},'')
+				   ,coalesce(#{email_id},'')
 			   </otherwise>
 		   </choose>
 
  			<choose>
 			   <when test="user_ip == null">
-				   ,isNull('','')
+				   ,coalesce('','')
 			   </when>
 			   <otherwise> 
-				   ,isNull(#{user_ip},'')
+				   ,coalesce(#{user_ip},'')
 			   </otherwise>
 		   </choose>
 		)
@@ -164,19 +164,19 @@
 				
 				<choose>
 				   <when test="user_id == null">
-					   UDT_ID = isNull('','')
+					   UDT_ID = coalesce('','')
 				   </when>
 				   <otherwise>
-					   UDT_ID = isNull(#{user_id},'')
+					   UDT_ID = coalesce(#{user_id},'')
 				   </otherwise>
 			    </choose>
 				  
 				<choose>
 					<when test="user_ip == null">
-					   ,UDT_IP = isNull('','')
+					   ,UDT_IP = coalesce('','')
 				    </when>
 				    <otherwise>
-					   ,UDT_IP = isNull(#{user_ip},'')
+					   ,UDT_IP = coalesce(#{user_ip},'')
 					</otherwise>
 			   </choose>
 			    
@@ -360,7 +360,7 @@
 <!-- 			, CRT_IP -->
 <!-- 		) VALUES ( -->
 <!-- 			#{p_EMAIL} -->
-<!-- 			, (SELECT ISNULL(MAX(SEQ), 0)+1 FROM SVMUSERLOGINMODIFIEDM WHERE EMAIL = #{EMAIL}) -->
+<!-- 			, (SELECT coalesce(MAX(SEQ), 0)+1 FROM SVMUSERLOGINMODIFIEDM WHERE EMAIL = #{EMAIL}) -->
 <!-- 			, #{user_nm} -->
 <!-- 			, #{system_cd} -->
 <!-- 			, #{status} -->

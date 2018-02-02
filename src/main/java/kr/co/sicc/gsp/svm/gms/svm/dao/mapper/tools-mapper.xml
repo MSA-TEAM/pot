@@ -73,7 +73,7 @@
 		  FROM 
 		  		SVMCODEM
 		<where>
-			 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
+			 coalesce(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
 					<choose>
 			    		<when test='!"".equals(etc_cond2) and etc_cond2 != null '>			    	
 						-- when절 [주석]
@@ -133,7 +133,7 @@
 		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE TENANT_ID	= #{tenant_id}
 												AND CP_CD = #{cp_cd} AND CODE_FIND = #{code_find} AND MAJOR_CD = '000')
 		<where>
-			 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
+			 coalesce(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
 			AND CODE_IDX = #{etc_cond1}
 			 
 					<choose>
@@ -167,7 +167,7 @@
 		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE TENANT_ID	= #{tenant_id}
 												AND CP_CD = #{cp_cd} AND CODE_FIND = #{code_find} AND MAJOR_CD = '000')
 		 
-   		 AND	 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
+   		 AND	 coalesce(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
 		 AND CODE_IDX2 = #{etc_cond1}
 		<if test="order != null and order != ''">
 	   	  ORDER BY SVMCODEM.${order}		

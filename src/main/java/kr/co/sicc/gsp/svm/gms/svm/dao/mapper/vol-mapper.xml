@@ -268,39 +268,39 @@
 						UNION ALL
 					</if>
 						SELECT
-						    isNull(#{tenant_id},'') AS TENANT_ID 
-						   ,isNull(#{cp_cd},'') AS CP_CD 
-						   ,isNull(#{ad_no},'') AS AD_NO 
-						   ,isNull(#{data.extra_cd},'') AS EXTRA_CD 
-				           ,isNull(#{data.exp_lvl_cd},'') AS EXP_LVL_CD
-				           ,isNull(#{data.exp_cd},'') AS EXP_CD
-				           ,isNull(#{data.exp_nm},'') AS EXP_NM
-				           ,isNull(#{data.exp_period},'') AS EXP_PERIOD
-				           ,isNull(#{data.description},'') AS DESCRIPTION
-				           ,isNull(#{data.lang_cd},'') AS LANG_CD
-				           ,isNull(#{data.lang_lvl_cd},'') AS LANG_LVL_CD
-				           ,isNull(#{data.skill_nm},'') AS SKILL_NM
-				           ,isNull(#{data.certi_file_nm},'') AS CERTI_FILE_NM
-				           ,isNull(#{data.use_yn},'') AS USE_YN
+						    coalesce(#{tenant_id},'') AS TENANT_ID 
+						   ,coalesce(#{cp_cd},'') AS CP_CD 
+						   ,coalesce(#{ad_no},'') AS AD_NO 
+						   ,coalesce(#{data.extra_cd},'') AS EXTRA_CD 
+				           ,coalesce(#{data.exp_lvl_cd},'') AS EXP_LVL_CD
+				           ,coalesce(#{data.exp_cd},'') AS EXP_CD
+				           ,coalesce(#{data.exp_nm},'') AS EXP_NM
+				           ,coalesce(#{data.exp_period},'') AS EXP_PERIOD
+				           ,coalesce(#{data.description},'') AS DESCRIPTION
+				           ,coalesce(#{data.lang_cd},'') AS LANG_CD
+				           ,coalesce(#{data.lang_lvl_cd},'') AS LANG_LVL_CD
+				           ,coalesce(#{data.skill_nm},'') AS SKILL_NM
+				           ,coalesce(#{data.certi_file_nm},'') AS CERTI_FILE_NM
+				           ,coalesce(#{data.use_yn},'') AS USE_YN
 
 				           ,now() AS CRT_DATE                                                    	
-						   ,isNull(#{username},'') AS CRT_ID
+						   ,coalesce(#{username},'') AS CRT_ID
 						   <choose>
 						   <when test="user_ip == null">
-							   ,isNull('','') AS CRT_IP
+							   ,coalesce('','') AS CRT_IP
 						   </when>
 						   <otherwise>
-							   ,isNull(#{user_ip},'') AS CRT_IP
+							   ,coalesce(#{user_ip},'') AS CRT_IP
 						   </otherwise>
 						   </choose>
-						   ,isNull(GETDATE(),'') AS UDT_DATE
-						   ,isNull(#{username},'') AS UDT_ID
+						   ,coalesce(GETDATE(),'') AS UDT_DATE
+						   ,coalesce(#{username},'') AS UDT_ID
 						   <choose>
 						   <when test="user_ip == null">
-							   ,isNull('','') AS UDT_IP
+							   ,coalesce('','') AS UDT_IP
 						   </when>
 						   <otherwise>
-							   ,isNull(#{user_ip},'') AS UDT_IP
+							   ,coalesce(#{user_ip},'') AS UDT_IP
 						   </otherwise>
 						   </choose>
 				</foreach>
