@@ -19,7 +19,7 @@ public interface SVMUserService {
 	public void update_priv(SVMUserVO vo) throws SiccException;
 	
 	public void update_passwd(SVMUserVO vo) throws SiccException;
-	public int chk_email(String email) throws SiccException;
+	public int chk_email(SVMUserVO vo) throws SiccException;
 	
 	public boolean chk_passwd(SVMUserVO vo) throws SiccException;
 	public String chk_email_auth(String email) throws SiccException;

@@ -43,6 +43,13 @@ public class SVMUserServiceImpl implements SVMUserService {
 
 			SVMSiccUserUtil.setDefaultUserInfo(vo);
 			
+			String strSalt = FileCoder.getSalt();
+			String encPassword = FileCoder.ComputeHash(vo.getEmail_id() + vo.getPassword(), strSalt);
+			String encSalt = FileCoder.byteToBase64(strSalt.getBytes("UTF-8"));
+			vo.setPassword(encPassword);
+			//vo.setEnc_salt(encSalt);
+			vo.setSaltBase64(encSalt);
+/*			
 			// password	: 암호화하기 위한 salt값 생성
 			String strSalt = FileCoder.getSalt();
 			// user_id + password 와 salt 값을 조합하여 암호화된 암호를 생성한다.
@@ -52,7 +59,7 @@ public class SVMUserServiceImpl implements SVMUserService {
 			
 			vo.setNewPassword(newPassword);
 			vo.setSaltBase64(saltBase64);
-			
+*/			
 //			// 그룹ID 값(배열 TO 문자열) 설정
 //			STRING ASSIGNED_GROUP_ID = GMSSTRINGUTIL.TOTOKENFROMSTRING(VO.GETGRANTED_GROUP_ID(), ",");
 //			VO.SETASSIGN_GROUP_ID(ASSIGNED_GROUP_ID);
@@ -159,11 +166,11 @@ public class SVMUserServiceImpl implements SVMUserService {
 
 	// 페스워드 찾기 - 이메일 검증
 	@Override
-	public int chk_email(String email) throws SiccException {
+	public int chk_email(SVMUserVO vo) throws SiccException {
 		SVMUserDAO mapper = session.getMapper(SVMUserDAO.class);
 		try{		
 			int result = 0;
-			result = mapper.chk_email(email);
+			result = mapper.chk_email(vo.getTenant_id(), vo.getCp_cd(), vo.getEmail_id());
 			return result;
 		} catch(DataAccessException e) {
 			throw SiccMessageUtil.getError(e);

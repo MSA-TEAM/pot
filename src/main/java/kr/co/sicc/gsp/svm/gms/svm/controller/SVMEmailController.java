@@ -147,7 +147,7 @@ public class SVMEmailController extends SiccController {
 			if(userVo != null){
 				//인증값 비교
 				
-				if("Y".equals(userVo.getEmail_auth_yn())){
+				if("Y".equals(userVo.getEmail_id_auth_yn())){
 					// 이미 인증한 사람 URL로 접속
 					return "redirect:/";
 				}else{
@@ -209,15 +209,20 @@ public class SVMEmailController extends SiccController {
 		String authYn = "N";
 		try{
 			if(userVo != null){
-				if("Y".equals(userVo.getEmail_auth_yn())) svmUserVo.setUrl("/404");
-				else{ 
+				if("Y".equals(userVo.getEmail_id_auth_yn())) {
+					svmUserVo.setUrl("/404");
+				}else{ 
 					//인증 하지않은 상태에서 RESEND 
 					if("false".equals(isRegistered)){
 						//msg = getMessage("svm.info.msg.send_auth_mail",null, locale);
-						if("true".equals(isLogin)) model.addAttribute("resend", false);
-						else model.addAttribute("resend", true);
+						if("true".equals(isLogin)) {
+							model.addAttribute("resend", false);
+						}else {
+							model.addAttribute("resend", true);
+						}
+					}else {
+						msg = getMessage("svm.message.info_resend_email",null, locale);
 					}
-					else msg = getMessage("svm.message.info_resend_email",null, locale);
 					model.addAttribute("userVo", userVo);
 					svmUserVo.setForwardUrl("/common/mail/resendEmail");
 				}
@@ -262,7 +267,7 @@ public class SVMEmailController extends SiccController {
 		
 		try{
 			// 가입된 이메일인지 검증
-			if(userService.chk_email(targetEmail) > 0){
+			if(userService.chk_email(vo) > 0){
 				if("N".equals(userService.chk_email_auth(targetEmail))){
 					// email 인증 확인
 					vo.setSuccess(false);

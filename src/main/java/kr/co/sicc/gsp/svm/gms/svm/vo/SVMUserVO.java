@@ -3,9 +3,11 @@ package kr.co.sicc.gsp.svm.gms.svm.vo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import kr.co.sicc.gsp.svm.gms.common.login.Role;
@@ -40,7 +42,7 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	private String p_system_cd = "";
 	private String system_cd = "";
 	private String user_id = "";
-	private String password = "";
+	//private String password = "";
 	private String old_password = "";
 	private String password_confirm = "";
 	private String user_nm = "";
@@ -49,7 +51,7 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	private String work_area_cd = "";
 	private String corps_cd = "";
 	private String part_cd = "";
-	private String use_yn = "";
+	//private String use_yn = "";
 	private String change_pwd_yn = "";
 	private String login_fail_cnt = "";
 	private String user_group = "";
@@ -59,7 +61,7 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	private String user_idx3 = "";
 	private String user_idx4 = "";
 	private String user_idx5 = "";
-	private String assign_group_id = "";
+	//private String assign_group_id = "";
 	private String group_system_cd = "";
 	private String priv_system_cd = "";
 	private String authority = "";
@@ -77,7 +79,7 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	private String email_dummy = "";
 	private String email_auth_yn = "";
 	private String birth_date = "";
-	private String submit_yn = "";
+	//private String submit_yn = "";
 	private String save_tab_cd = "";
 	
 	// 암호화
@@ -88,6 +90,31 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	private String sso_msg = "";
 	
 	//-------
+	
+	//추가되는 것들!!!!
+	private String tenant_id;
+	//private String cp_cd;
+	private String email_id;
+	private String email_id_auth_yn;
+	private String password;
+	private String use_yn;
+	private String email_id_auth_id;
+	private String password_chg_yn;
+	private String birth_dt;
+	private String submit_yn;
+	private Date submit_date;
+	private String save_tab_id;
+	private String assign_group_id;
+	private Date crt_date;
+	private String crt_id;
+	private String crt_ip;
+	private String enc_salt;
+	private Date udt_date;
+	private String udt_id;
+	private String udt_ip;
+	
+	
+	//////////////////////////
 	
 	private List<? extends Role> auth;
 	private boolean accountNonExpired = true;
@@ -417,12 +444,6 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	public void setPart_cd(String part_cd) {
 		this.part_cd = part_cd;
 	}
-	public String getUse_yn() {
-		return use_yn;
-	}
-	public void setUse_yn(String use_yn) {
-		this.use_yn = use_yn;
-	}
 	public String getChange_pwd_yn() {
 		return change_pwd_yn;
 	}
@@ -543,12 +564,6 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	public void setBirth_date(String birth_date) {
 		this.birth_date = birth_date;
 	}
-	public String getSubmit_yn() {
-		return submit_yn;
-	}
-	public void setSubmit_yn(String submit_yn) {
-		this.submit_yn = submit_yn;
-	}
 	public String getSave_tab_cd() {
 		return save_tab_cd;
 	}
@@ -567,4 +582,143 @@ public class SVMUserVO extends SiccGenericVO  implements UserDetails {
 	public void setSaltBase64(String saltBase64) {
 		this.saltBase64 = saltBase64;
 	}
+
+	public String getTenant_id() {
+		return tenant_id;
+	}
+
+	public void setTenant_id(String tenant_id) {
+		this.tenant_id = tenant_id;
+	}
+
+	public String getEmail_id() {
+		return email_id;
+	}
+
+	public void setEmail_id(String email_id) {
+		this.email_id = email_id;
+	}
+
+	public String getEmail_id_auth_yn() {
+		return email_id_auth_yn;
+	}
+
+	public void setEmail_id_auth_yn(String email_id_auth_yn) {
+		this.email_id_auth_yn = email_id_auth_yn;
+	}
+
+	public String getUse_yn() {
+		return use_yn;
+	}
+
+	public void setUse_yn(String use_yn) {
+		this.use_yn = use_yn;
+	}
+
+	public String getEmail_id_auth_id() {
+		return email_id_auth_id;
+	}
+
+	public void setEmail_id_auth_id(String email_id_auth_id) {
+		this.email_id_auth_id = email_id_auth_id;
+	}
+
+	public String getPassword_chg_yn() {
+		return password_chg_yn;
+	}
+
+	public void setPassword_chg_yn(String password_chg_yn) {
+		this.password_chg_yn = password_chg_yn;
+	}
+
+	public String getBirth_dt() {
+		return birth_dt;
+	}
+
+	public void setBirth_dt(String birth_dt) {
+		this.birth_dt = birth_dt;
+	}
+
+	public String getSubmit_yn() {
+		return submit_yn;
+	}
+
+	public void setSubmit_yn(String submit_yn) {
+		this.submit_yn = submit_yn;
+	}
+
+	public Date getSubmit_date() {
+		return submit_date;
+	}
+
+	public void setSubmit_date(Date submit_date) {
+		this.submit_date = submit_date;
+	}
+
+	public String getSave_tab_id() {
+		return save_tab_id;
+	}
+
+	public void setSave_tab_id(String save_tab_id) {
+		this.save_tab_id = save_tab_id;
+	}
+
+	public Date getCrt_date() {
+		return crt_date;
+	}
+
+	public void setCrt_date(Date crt_date) {
+		this.crt_date = crt_date;
+	}
+
+	public String getCrt_id() {
+		return crt_id;
+	}
+
+	public void setCrt_id(String crt_id) {
+		this.crt_id = crt_id;
+	}
+
+	public String getCrt_ip() {
+		return crt_ip;
+	}
+
+	public void setCrt_ip(String crt_ip) {
+		this.crt_ip = crt_ip;
+	}
+
+	public String getEnc_salt() {
+		return enc_salt;
+	}
+
+	public void setEnc_salt(String enc_salt) {
+		this.enc_salt = enc_salt;
+	}
+
+	public Date getUdt_date() {
+		return udt_date;
+	}
+
+	public void setUdt_date(Date udt_date) {
+		this.udt_date = udt_date;
+	}
+
+	public String getUdt_id() {
+		return udt_id;
+	}
+
+	public void setUdt_id(String udt_id) {
+		this.udt_id = udt_id;
+	}
+
+	public String getUdt_ip() {
+		return udt_ip;
+	}
+
+	public void setUdt_ip(String udt_ip) {
+		this.udt_ip = udt_ip;
+	}
+
+	
+	
 }

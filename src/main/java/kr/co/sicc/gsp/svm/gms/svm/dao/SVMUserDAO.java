@@ -20,7 +20,7 @@ public interface SVMUserDAO {
 	public void insert_priv(SVMUserVO vo) throws SiccException;
 	public void insert_auth(SVMUserVO vo) throws SiccException;
 	public void insert(SVMUserVO vo) throws SiccException;
-	public int chk_email(String email)throws SiccException;
+	public int chk_email(String tenantId, String cpCd, String emailId)throws SiccException;
 	public String chk_email_auth(String email)throws SiccException;
 //	public void insert_history(SVMUserVO vo) throws SiccException;
 }

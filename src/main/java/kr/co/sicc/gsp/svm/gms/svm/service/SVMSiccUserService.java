@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -46,7 +48,12 @@ public class SVMSiccUserService implements UserDetailsService{
 	@Override
 	public SVMUserVO loadUserByUsername(String email) throws UsernameNotFoundException {
 		SVMLoginDAO mapper = session.getMapper(SVMLoginDAO.class);
-		SVMUserVO user = mapper.userInfo(email);
+		
+		//parameter/항목추가
+		String tenantId = "test";
+		String cpcd = "test";
+		SVMUserVO user = mapper.userInfo(tenantId, cpcd, email);
+		///////////////////////////////////////
 		
 		if(user == null) {
 			if(SICC_SSO) {
@@ -59,6 +66,10 @@ public class SVMSiccUserService implements UserDetailsService{
 				throw new UsernameNotFoundException("svm.info.msg.no_regi_email");
 			}
 		}
+		
+		////////////////////////사용 가능하도록 강제 설정
+		user.setEnabled(true);
+		////////////////////
 		
 //		if(user == null)
 //            throw new UsernameNotFoundException("User not found: " + email);
@@ -78,7 +89,8 @@ public class SVMSiccUserService implements UserDetailsService{
 //			}
 //		}
 
-		List<? extends Role> roles = mapper.authList(email);
+		//List<? extends Role> roles = mapper.authList(email); 수정
+		List<? extends Role> roles = mapper.authList(tenantId, cpcd, email);
 		user.setAuth(roles);
 		
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -118,7 +130,11 @@ public class SVMSiccUserService implements UserDetailsService{
 
 	public SVMUserVO getSVMUserVO(String username) {
 		SVMLoginDAO mapper = session.getMapper(SVMLoginDAO.class);
-		SVMUserVO user = mapper.userInfo(username);
+		//SVMUserVO user = mapper.userInfo(username);
+		//parameter/항목추가
+				String tenantId = "test1";
+				String cpcd = "test1";
+				SVMUserVO user = mapper.userInfo(username, tenantId, cpcd);
 		
 		if(user != null) {
 			HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -182,11 +198,11 @@ public class SVMSiccUserService implements UserDetailsService{
 	}
 
 	// 페스워드 찾기 - 이메일 검증
-	public int chk_email(String email) throws SiccException {
+	public int chk_email(SVMUserVO vo) throws SiccException {
 		SVMUserDAO mapper = session.getMapper(SVMUserDAO.class);
 		try{		
 			int result = 0;
-			result = mapper.chk_email(email);
+			result = mapper.chk_email(vo.getTenant_id(), vo.getCp_cd(), vo.getEmail_id());
 			return result;
 		} catch(DataAccessException e) {
 			throw SiccMessageUtil.getError(e);

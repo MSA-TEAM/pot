@@ -56,9 +56,6 @@ public class SVMLoginProvider implements AuthenticationProvider {
 
 			if(!SICC_SSO) {
 
-//				if(user.getAuthorities().isEmpty())
-//					throw new BadCredentialsException("login.access.denied");
-				
 				byte[] saltByte = Base64Utils.decodeFromString(user.getSalt());
 				//byte[] saltByte = FileCoder.base64ToByte(user.getSalt());
 				String saltStr = new String(saltByte);
@@ -74,14 +71,11 @@ public class SVMLoginProvider implements AuthenticationProvider {
 				
 				String comPassword = Base64Utils.encodeToString(bOutput);
 				
-//				logger.info("username : " + email + " / password : " + password + " / hash password : " + comPassword+" / salt : "+saltStr);
-//		        logger.info("username : " + user.getUsername() + " / password : " + user.getPassword());
-				
 				if(!comPassword.equals(user.getPassword())){
 					throw new BadCredentialsException("svm.message.login_misspell");
 				}
 			}
-			
+
 			authorities = user.getAuthorities();
 			
 			UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password, authorities);

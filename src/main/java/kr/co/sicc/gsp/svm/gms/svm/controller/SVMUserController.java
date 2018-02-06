@@ -58,9 +58,11 @@ public class SVMUserController extends SiccController {
 		SVMUserVO userVo = new SVMUserVO();
 		try{
 			SiccBeanUtils.copyProperties(userVo, vo, model);
-			if(request != null ) userVo.setUser_ip(siccUserService.getClientIp(request));
+			if(request != null ) {
+				userVo.setUser_ip(siccUserService.getClientIp(request));
+			}
 			
-					switch(cmd){
+			switch(cmd){
 				case "list" :
 					userVo.setForwardUrl("/svm/user/list");
 //					userVo = svmUserService.list(userVo);
@@ -84,14 +86,14 @@ public class SVMUserController extends SiccController {
 					logger.debug("SVMUserController >>  users > CASE insert");
 					logger.debug("userVO >>> "+userVo.toString());
 					logger.debug("userVO >>> "+userVo.getEmail());
-					if( 0 < svmUserService.chk_email(userVo.getEmail())){
+					if( 0 < svmUserService.chk_email(userVo)){
 						if("N".equals(svmUserService.chk_email_auth(userVo.getEmail()))){
 							SiccMessageUtil.saveSuccess(redirectAttributes, messageSource.getMessage("svm.info.msg.duplicate_email_and_no_auth",null, locale), MessageConstants.SHOW_TYPE_POPUP);
 						}else{
 							SiccMessageUtil.saveSuccess(redirectAttributes, messageSource.getMessage("svm.info.msg.duplicate_email",null, locale), MessageConstants.SHOW_TYPE_POPUP);
 						}
 						userVo.setRedirectUrl("/svm/application/application", lang);
-					}else if("".equals(userVo.getEmail().trim())){
+					}else if("".equals(userVo.getEmail_id().trim())){
 						SiccMessageUtil.saveSuccess(redirectAttributes, messageSource.getMessage("svm.message.mandatory_email",null, locale), MessageConstants.SHOW_TYPE_POPUP);
 						userVo.setRedirectUrl("/svm/application/application", lang);
 					}else if("".equals(userVo.getPassword().trim())){
@@ -104,14 +106,22 @@ public class SVMUserController extends SiccController {
 						SiccMessageUtil.saveSuccess(redirectAttributes, messageSource.getMessage("svm.message.no_input_birth",null, locale), MessageConstants.SHOW_TYPE_POPUP);
 						userVo.setRedirectUrl("/svm/application/application", lang);
 					} else {
-						userVo.setEmail_auth_yn("N");
+						userVo.setEmail_id_auth_yn("Y");
 						userVo.setSubmit_yn("N");
-						userVo.setChange_pwd_yn("N");
+						userVo.setPassword_chg_yn("N");
 						userVo.setUse_yn("Y");
 						userVo.setAssign_group_id("SVM_USER");
+						///////tenant_id, cp_cd 임의 설정
+						userVo.setTenant_id("test");
+						userVo.setCp_cd("test");
+						userVo.setEmail_id_auth_yn("Y");
 						svmUserService.insert(userVo);
-						sendMailService.sendAuthEmail(userVo.getEmail(),userVo.getUser_ip());
-						userVo.setRedirectUrl("mail/resendEmail","");
+						
+						//mail인증 사용 x - auth_yn 값을 Y로 고정하고 forwarding
+						userVo.setForwardUrl("/common/mail/recieveEmail");
+						model.addAttribute("authYn", userVo.getEmail_id_auth_yn());
+						model.addAttribute("email", userVo.getEmail_id());
+						///////////////////
 						//SiccMessageUtil.saveSuccess(redirectAttributes, messageSource.getMessage("svm.info.msg.send_auth_mail",null, locale), MessageConstants.SHOW_TYPE_POPUP);
 					}
 					redirectAttributes.addFlashAttribute("svmUserVo", userVo);
@@ -247,7 +257,7 @@ public class SVMUserController extends SiccController {
 				vo.setSuccess(false);
 				vo.setMsg("EA");
 			}
-			else if(0 == svmUserService.chk_email(vo.getEmail())){
+			else if(0 == svmUserService.chk_email(vo)){
 				// email 확인
 				vo.setSuccess(false);
 				vo.setMsg("EM");

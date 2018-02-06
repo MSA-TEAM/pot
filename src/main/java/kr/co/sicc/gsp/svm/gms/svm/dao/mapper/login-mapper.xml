@@ -26,7 +26,7 @@
   	<select id="userInfo"  resultType="kr.co.sicc.gsp.svm.gms.svm.vo.SVMUserVO">
     <![CDATA[
     SELECT 
-    	   EMAIL_ID AS NAME
+    	   EMAIL_ID
     	  ,PASSWORD
 		,(CASE WHEN USE_YN = 'Y' THEN 1 ELSE 0 END) AS ENABLED
 		  ,USE_YN
