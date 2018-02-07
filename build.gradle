@@ -24,7 +24,7 @@ jar {
     version =  '1.0.0-RELEASE'
 }
 
-group = 'docker.gsp.sicc.co.kr:5000'
+group = 'docker.gsp.sicc.co.kr'
 
 docker {	
 	name "${project.group}/${jar.baseName}:${jar.version}"
@@ -32,20 +32,18 @@ docker {
 	buildArgs(['JAR_FILE': "${jar.archiveName}"])
 }
 
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
 }
 
-// hi
+
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile("org.springframework.boot:spring-boot-starter-security") // for security
 	compile group: 'org.springframework.security', name: 'spring-security-taglibs' // for common.jsp
-
 	compile('org.springframework.boot:spring-boot-configuration-processor')   // for multipart
 	compile('org.springframework:spring-context-support')  // for mail 
 	compile('com.sun.mail:javax.mail')  // for mail	
