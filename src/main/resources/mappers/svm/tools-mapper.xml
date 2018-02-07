@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.svm.dao.SVMToolsDAO">
+
+	<sql id="isCode_find" >
+		-- include isCode_find [주석]
+<!-- 		<choose> -->
+<!-- 			<when test="code_find != null and code_find != ''"> -->
+				<choose>
+					<when test='"TENANT_ID".equals(code_find)'>
+						AND	TENANT_ID = ${code_find} 
+					</when>
+					<when test='"CP_CD".equals(code_find)'>
+						AND	CP_CD = ${code_find} 
+					</when>
+					<when test='"MAJOR_CD".equals(code_find)'>
+						AND	MAJOR_CD = ${code_find} 
+					</when>
+					<when test='"MINOR_CD".equals(code_find)'>
+						AND MINOR_CD = ${code_find}
+					</when>
+					<when test='"CODE_NM".equals(code_find)'>
+						AND CODE_NM = ${code_find}
+					</when>
+					<when test='"L1_CODE_NM".equals(code_find)'>
+						AND L1_CODE_NM = ${code_find}
+					</when>
+					<when test='"L2_CODE_NM".equals(code_find)'>
+						AND L2_CODE_NM = ${code_find}
+					</when>
+					<when test='"L3_CODE_NM".equals(code_find)'>
+						AND L3_CODE_NM = ${code_find}
+					</when>
+					<when test='"L4_CODE_NM".equals(code_find)'>
+						AND L4_CODE_NM = ${code_find}
+					</when>
+					<when test='"DISPLAY_CD".equals(code_find)'>
+						AND DISPLAY_CD = ${code_find}
+					</when>
+					<when test='"HIDE_YN".equals(code_find)'>
+						AND HIDE_YN = ${code_find}
+					</when>
+					<when test='"SPORT_ORD".equals(code_find)'>
+						AND SPORT_ORD = ${code_find}
+					</when>
+					<when test='"CODE_IDX1".equals(code_find)'>
+						AND CODE_IDX1 = ${code_find}
+					</when>
+					<when test='"CODE_IDX2".equals(code_find)'>
+						AND CODE_IDX2 = ${code_find}
+					</when>
+					<when test='"CODE_IDX3".equals(code_find)'>
+						AND CODE_IDX3 = ${code_find}
+					</when>
+					<when test='"CODE_IDX4".equals(code_find)'>
+						AND CODE_IDX4 = ${code_find}
+					</when>
+					<when test='"CODE_IDX5".equals(code_find)'>
+						AND CODE_IDX5 = ${code_find}
+					</when>
+
+					<otherwise>
+						-- 주석 [ isCode_find >> otherwise ]
+					</otherwise>				
+				</choose>
+	</sql>
+
+	<select id="svmCodeList" resultType="hashmap" >
+		SELECT 
+				MAJOR_CD, MINOR_CD, CODE_NM, L1_CODE_NM, L2_CODE_NM, L3_CODE_NM, L4_CODE_NM, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5
+		  FROM 
+		  		SVMCODEM
+		<where>
+			 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
+					<choose>
+			    		<when test='!"".equals(etc_cond2) and etc_cond2 != null '>			    	
+						-- when절 [주석]
+		    			AND MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM WHERE MAJOR_CD = ( SELECT MINOR_CD FROM SVMCODEM WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND CODE_FIND = #{etc_cond2} AND MAJOR_CD = '000' ) AND MINOR_CD = #{code_find})
+		    			</when>
+		    			<otherwise>
+		    			-- otherwise절 [주석]
+				    	AND MAJOR_CD = ( SELECT MINOR_CD FROM SVMCODEM WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND MAJOR_CD = '000' AND CODE_FIND = #{code_find} )
+				    	<if test='"".equals(etc_cond1) or etc_cond1 == null '>
+					    	<if test='"CITY_CD".equals(code_find)'>
+				    		  AND code_idx1 = (
+									          SELECT PROVINSI_CD
+									          FROM SVMVOLUNTEERM
+									          WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD		= #{cp_cd} 
+												AND AD_NO 		= #{ad_no}
+									          )
+					    	</if>
+					    	<if test='"DISTRICT_CD".equals(code_find)'>
+				    		  AND code_idx1 = (
+									          SELECT CITY_CD
+									          FROM SVMVOLUNTEERM
+									          WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD		= #{cp_cd} 
+												AND AD_NO 		= #{ad_no}
+									          )
+					    	</if>
+					    	<if test='"VILLAGE_CD".equals(code_find)'>
+				    		  AND code_idx1 = (
+									          SELECT DISTRICT_CD
+									          FROM SVMVOLUNTEERM
+									          WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD		= #{cp_cd} 
+												AND AD_NO 		= #{ad_no}
+									          )
+					    	</if>
+				    	</if>
+		    			</otherwise>
+	    			</choose>		
+	    		<if test='!"".equals(etc_cond1) and etc_cond1 != null '>
+		    		AND CODE_IDX1 = #{etc_cond1}
+		    	</if>
+		</where>		
+		<if test="order != null and order != ''">
+	   	  ORDER BY SVMCODEM.${order}		
+		</if>
+	</select>
+	
+	<select id="changeAddr" resultType="hashmap" >		
+		SELECT MAJOR_CD, MINOR_CD, CODE_NM, L1_CODE_NM, L2_CODE_NM, L3_CODE_NM, L4_CODE_NM, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5
+		  FROM 
+		  		SVMCODEM
+		 WHERE 
+		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND CODE_FIND = #{code_find} AND MAJOR_CD = '000')
+		<where>
+			 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
+			AND CODE_IDX = #{etc_cond1}
+			 
+					<choose>
+			    		<when test='"PROVINCE_CD".eqausl(code_find)'>			    	
+		    			</when>
+			    		<when test='"CITY_CD".eqausl(code_find)'>			    	
+						-- when절 [CITY] 
+		    			</when>
+			    		<when test='"VILLAGE_CD".eqausl(code_find)'>			    	
+						-- when절 [VILLAGE]
+		    			</when>
+		    			<otherwise>
+		    			-- otherwise절 [주석] #{etc_cond1} /  #{etc_cond2}
+		    			</otherwise>
+	    			</choose>		
+	    		<if test='!"".equals(etc_cond1) and etc_cond1 != null '>
+		    		--AND CODE_IDX1 = #{etc_cond1}
+		    	</if>
+		</where>		
+		<if test="order != null and order != ''">
+	   	  ORDER BY SVMCODEM.${order}		
+		</if>
+	</select>
+	
+	<select id="changeExperience" resultType="hashmap" >		
+		SELECT MAJOR_CD, MINOR_CD, CODE_NM, L1_CODE_NM, L2_CODE_NM, L3_CODE_NM, L4_CODE_NM, CODE_IDX1, CODE_IDX2, CODE_IDX3, CODE_IDX4, CODE_IDX5
+		  FROM 
+		  		SVMCODEM
+		 WHERE 
+		 		MAJOR_CD = (SELECT MINOR_CD FROM SVMCODEM  WHERE TENANT_ID	= #{tenant_id}
+												AND CP_CD = #{cp_cd} AND CODE_FIND = #{code_find} AND MAJOR_CD = '000')
+		 
+   		 AND	 ISNULL(HIDE_YN,' ') <![CDATA[<>]]> 'Y'	  
+		 AND CODE_IDX2 = #{etc_cond1}
+		<if test="order != null and order != ''">
+	   	  ORDER BY SVMCODEM.${order}		
+		</if>
+	</select>
+
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.svm.photo.SVMPhotoDAO">
+
+	<select id="read" parameterType="String" resultType="hashmap">
+	<![CDATA[
+		SELECT AD_NO,
+		       PHOTO,
+		       FILE_NM,
+		       THUMNAIL,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT
+		  FROM SVMPHOTOM
+		 WHERE AD_NO = #{0}
+		 AND PHOTO_FG = #{1}
+	]]>
+	</select>
+    
+    <insert id="insert" parameterType="kr.co.sicc.gsp.svm.gms.svm.photo.SVMPhotoVO">
+    <![CDATA[
+        INSERT INTO SVMPHOTOM (
+               AD_NO,
+		       PHOTO,
+		       PHOTO_FG,
+		       FILE_NM,
+		       THUMNAIL,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT
+        ) VALUES (
+               #{ad_no},
+               #{photo},
+               #{photo_fg},
+               #{file_nm},
+               #{thumbnail},
+               #{username},
+               #{user_ip},   
+               getdate(),
+               #{username},  
+               #{user_ip},  
+               getdate()
+        )
+    ]]>
+    </insert>
+    
+    <delete id="delete">
+    <![CDATA[
+        DELETE 
+          FROM SVMPHOTOM
+         WHERE AD_NO = #{0}
+         AND PHOTO_FG = #{1}
+    ]]>
+    </delete>
+    
+    <select id="readPassport" parameterType="String" resultType="hashmap">
+	<![CDATA[
+		SELECT AD_NO,
+		       PHOTO,
+		       THUMNAIL,
+		       FILE_NM,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT
+		  FROM SVMPHOTOM
+		 WHERE AD_NO = #{0}
+		 AND PHOTO_FG = #{1}
+	]]>
+	</select>
+    
+    <insert id="insertPassport" parameterType="kr.co.sicc.gsp.svm.gms.svm.photo.SVMPhotoVO">
+    <![CDATA[
+        INSERT INTO SVMPHOTOM (
+               AD_NO,
+		       PHOTO,
+		       PHOTO_FG,
+		       THUMNAIL,
+		       FILE_NM,
+		       CRT_ID,
+		       CRT_IP,
+		       CRT_DT,
+		       UDT_ID,
+		       UDT_IP,
+		       UDT_DT  
+        ) VALUES (
+               #{ad_no},
+               #{photo},
+               #{photo_fg},
+               #{thumbnail},
+               #{file_nm},
+               #{username},
+               #{user_ip},   
+               getdate(),
+               #{username},  
+               #{user_ip},  
+               getdate()
+        )
+    ]]>
+    </insert>
+    
+    <delete id="deletePassport">
+    <![CDATA[
+        DELETE 
+          FROM SVMPHOTOM
+         WHERE AD_NO = #{0}
+         AND PHOTO_FG LIKE #{1}+'%'
+    ]]>
+    </delete>
+</mapper>

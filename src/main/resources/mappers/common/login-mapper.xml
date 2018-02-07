@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.common.login.LoginDAO">
+ 	
+	<update id="loginSuccess" parameterType="kr.co.sicc.gsp.svm.gms.common.login.UserInfo">
+	<![CDATA[
+	INSERT INTO WEBLOGININFOM (
+		SYSTEM_CD, SYSTEM_NM, USER_ID, MSG, USER_IP, ACCESS_DATE, USE_MINUTE, CP_CD
+	) VALUES (
+		#{current_system_cd},
+		'',
+		#{user_id},
+		'login.success',
+		#{user_ip},
+		now(),
+		0,
+		#{cp_cd}
+	)
+	]]>
+	</update>
+	
+	<update id="loginFail" parameterType="kr.co.sicc.gsp.svm.gms.common.login.UserInfo">
+	<![CDATA[
+	INSERT INTO WEBLOGINFAILINFOM (
+		TENANT_ID, CP_CD, SYSTEM_CD, SYSTEM_NM, EMAIL_ID, MESSAGE, USER_IP, ACCESS_DATE
+	) VALUES (
+		'test1',
+		'test1',	
+		#{current_system_cd},
+		'',
+		#{user_id},
+		#{userIdx5},
+		#{user_ip},
+		now()
+	)
+	]]>
+	</update>
+	
+	<update id="logout" parameterType="kr.co.sicc.gsp.svm.gms.common.login.UserInfo">
+	<![CDATA[	
+	INSERT INTO WEBLOGININFOM (
+		SYSTEM_CD, SYSTEM_NM, USER_ID, MSG, USER_IP, ACCESS_DATE, USE_MINUTE, CP_CD
+	) VALUES (
+		#{current_system_cd},
+		'',
+		#{user_id},
+		'logout.success',
+		#{user_ip},
+		now(),
+		0,
+		#{cp_cd}
+	)
+	]]>
+	</update>
+	
+	<update id="loginFailCount" parameterType="kr.co.sicc.gsp.svm.gms.common.login.UserInfo">
+	<![CDATA[
+	UPDATE WEBUSERM
+	   SET LOGIN_FAIL_CNT = LOGIN_FAIL_CNT + 1
+	 WHERE USER_ID = #{user_id}
+	     AND SYSTEM_CD = #{current_system_cd}
+	]]>
+	</update>
+	
+	<update id="loginFailCountReset" parameterType="kr.co.sicc.gsp.svm.gms.common.login.UserInfo">
+	<![CDATA[
+	UPDATE WEBUSERM
+	   SET LOGIN_FAIL_CNT = 0
+	 WHERE USER_ID = #{user_id}
+	     AND SYSTEM_CD = #{current_system_cd}
+	]]>
+	</update>
+	<select id="calculateLoginFailResetCriterion" resultType="String">
+	<![CDATA[
+		SELECT CASE WHEN DATEDIFF(MINUTE, MAX(ACCESS_DATE), GETDATE()) > 5
+					THEN 'Y'
+					ELSE 'N'
+					END
+				AS RESET_CONFIRM_YN
+		  FROM WEBLOGINFAILINFOM
+		 WHERE USER_ID = #{user_id}
+		     AND SYSTEM_CD = #{system_cd}
+	]]>	
+	</select>
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.svm.dao.MailDAO">
+
+	<select id="authCheck" resultType="String">
+		SELECT 
+			--EMAIL_ID,
+			 EMAIL_ID_AUTH_ID
+			--, AD_NO, EMAIL_ID_AUTH_YN, PASSWORD, PASSWORD_CHG_YN, BIRTH_DT
+ 		FROM 
+ 		 	SVMUSERM
+	    WHERE TENANT_ID	= #{tenantId}
+	      AND CP_CD		= #{cpCd}
+	      AND EMAIL_ID 	= #{emailId}
+	</select>
+	
+	<update id="authSuccess">
+		<![CDATA[
+		UPDATE
+			 SVMUSERM
+		SET 
+			EMAIL_ID_AUTH_YN = 'Y',
+			UDT_DATE = now()
+	    WHERE TENANT_ID	= #{tenantId}
+	      AND CP_CD		= #{cpCd}
+	      AND EMAIL_ID 	= #{emailId}
+		]]>
+	</update>
+	
+	<update id="updateEmailDummy" parameterType="hashmap">
+		<![CDATA[
+		UPDATE
+			 SVMUSERM
+		SET 
+			EMAIL_ID_AUTH_ID = #{dummyKey},
+			UDT_DATE = now(),
+			UDT_IP = #{ip}
+	    WHERE TENANT_ID	= #{tenantId}
+	      AND CP_CD		= #{cpCd}
+	      AND EMAIL_ID 	= #{emailId}
+		]]>
+	</update>
+
+</mapper>
