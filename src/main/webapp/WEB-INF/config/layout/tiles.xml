@@ -15,11 +15,11 @@
     	<put-attribute name="body-content" value="" />
     	<put-attribute name="copyright"    value="/WEB-INF/views/common/main/svm_bottom.jsp" />
 	</definition>
-	
+	 
 	<definition name="exclude" template="/WEB-INF/views/common/layouts/GMSDefaultLayout_noframe.jsp"> 
 		<put-attribute name="body-content" value="" /> 
 	</definition>
-	
+	 
 	<definition name="login" template="/WEB-INF/views/common/layouts/GMSDefaultLayout_login.jsp"> 
 		<put-attribute name="body-content" value="" /> 
 	</definition>

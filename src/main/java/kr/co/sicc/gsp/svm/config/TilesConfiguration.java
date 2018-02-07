@@ -13,8 +13,8 @@ public class TilesConfiguration {
     public TilesConfigurer tilesConfigurer() {
         final TilesConfigurer configurer = new TilesConfigurer();        
         //configurer.setDefinitions(new String[] {"WEB-INF/tiles/tiles.xml"});  // test : console admin 
-        configurer.setDefinitions(new String[] {"WEB-INF/config/layout/tiles.xml"});
-        configurer.setCheckRefresh(true);
+        configurer.setDefinitions(new String[] {"WEB-INF/tiles/tiles.xml"});
+        //configurer.setCheckRefresh(true);
         return configurer;
     }
 

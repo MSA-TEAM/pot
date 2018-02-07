@@ -25,10 +25,6 @@ node {
         ])
     ])
 
-    stage('Info') {
-        echo "Repository : ${repository}/${reference}"
-		echo "${after} => ${before}"
-    }
 
     stage('Checkout') {
         checkout scm
@@ -38,16 +34,18 @@ node {
         sh './gradlew check || true'
     }
 
-    stage('Deploy check') {
-        mail (to: 'mjskyroom@naver.com',
-            subject: "Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) is waiting for input",
-            body: "Please go to ${env.BUILD_URL}.");
-        input "운영 환경으로 배포하시겠습니까?"
-    }    
+    stage('Build') {
+        try {
+            sh './gradlew build dockerPush'
+            archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
+        } catch(e) {
+            mail subject: "Jenkins Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) failed with ${e.message}",
+                to: 'blue.park@kt.com',
+                body: "Please go to $env.BUILD_URL."
+        }
+    }
     
     stage('Deploy') {
-        if (currentBuild.result == null || currentBuild.result == 'SUCCESS') {
-            sh 'true'
-        }
+        sh 'kubectl apply -f deployment.yaml'
     }    
 }
