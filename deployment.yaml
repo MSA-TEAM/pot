@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
       - name: gsp-vol
-        image: docker.gsp.sicc.co.kr/vol:1.0.0-RELEASE
+        image: docker.gsp.sicc.co.kr/vol:1.0.1-RELEASE
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: prd
