@@ -54,7 +54,7 @@ dependencies {
 	compile('com.sun.mail:javax.mail')  // for mail	
 	compile('org.apache.commons:commons-lang3:3.4') // for StringUtils
 
-	compile('org.springframework.boot:spring-boot-devtools') // for jsp auto reload
+//	compile('org.springframework.boot:spring-boot-devtools') // for jsp auto reload
 	
 	compile fileTree(dir: 'libs', include: '*.jar') // for sicc jar
 	compile fileTree(dir: 'libs', include: ['*.jar'])
