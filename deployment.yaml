@@ -8,9 +8,9 @@ spec:
     app: gsp-vol
   ports:
   - protocol: TCP
-    port: 8080
+    port: 8090
     nodePort: 30100
-    targetPort: 8080
+    targetPort: 8090
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -27,7 +27,7 @@ spec:
     metadata:
       labels:
         app: gsp-vol
-        version: "1.0.0-RELEASE"
+        version: "1.0.1-RELEASE"
     spec:
       containers:
       - name: gsp-vol
@@ -39,4 +39,4 @@ spec:
           value: http://100.70.69.238:8888
         ports:
         - name: http
-          containerPort: 8080
+          containerPort: 8090
