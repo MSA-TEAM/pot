@@ -5,7 +5,6 @@ import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
@@ -17,8 +16,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableConfigurationProperties
-@MapperScan(basePackages="kr.co.sicc.gsp.svm.gms.svm.dao")
-//@MapperScan(value={"kr.co.sicc.gsp.svm.sicc.menu.mapper", "kr.co.sicc.gsp.svm.gms.svm.dao.mapper"})//			
 @EnableTransactionManagement
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class })
 public class DataSourceConfiguration {
@@ -28,7 +25,7 @@ public class DataSourceConfiguration {
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        sessionFactory.setMapperLocations(resolver.getResources("classpath:kr/co/sicc/gsp/svm/gms/svm/dao/mapper/*.xml"));        
+        sessionFactory.setMapperLocations(resolver.getResources("classpath:mappers/**/*.xml"));
         return sessionFactory.getObject();        
     }
  
