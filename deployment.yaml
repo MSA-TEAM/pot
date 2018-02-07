@@ -27,11 +27,11 @@ spec:
     metadata:
       labels:
         app: gsp-vol
-        version: "1.0.2-RELEASE"
+        version: "1.0.3-RELEASE"
     spec:
       containers:
       - name: gsp-vol
-        image: docker.gsp.sicc.co.kr/vol:1.0.2-RELEASE
+        image: docker.gsp.sicc.co.kr/vol:1.0.3-RELEASE
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: prd

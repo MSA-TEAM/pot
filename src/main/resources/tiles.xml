@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+	 
+<tiles-definitions>
+	<definition name="gms.default.frame" template="/WEB-INF/views/common/layouts/GMSDefaultLayout.jsp">
+		<put-attribute name="header"       value="/WEB-INF/views/common/main/top.jsp"/>
+    	<put-attribute name="body-content" value="" />
+    	<put-attribute name="copyright"    value="/WEB-INF/views/common/main/bottom.jsp" />
+	</definition>
+	
+	<definition name="gms.default.svmframe" template="/WEB-INF/views/common/layouts/GMSDefaultSvmLayout.jsp">
+		<put-attribute name="header"       value="/WEB-INF/views/common/main/svm_top.jsp"/>
+    	<put-attribute name="body-content" value="" />
+    	<put-attribute name="copyright"    value="/WEB-INF/views/common/main/svm_bottom.jsp" />
+	</definition>
+	 
+	<definition name="exclude" template="/WEB-INF/views/common/layouts/GMSDefaultLayout_noframe.jsp"> 
+		<put-attribute name="body-content" value="" /> 
+	</definition>
+	 
+	<definition name="login" template="/WEB-INF/views/common/layouts/GMSDefaultLayout_login.jsp"> 
+		<put-attribute name="body-content" value="" /> 
+	</definition>
+	
+	<definition name="report" template="/WEB-INF/views/common/layouts/GMSDefaultLayout_report.jsp"> 
+		<put-attribute name="body-content" value="" /> 
+	</definition>
+
+	<definition name="/svm/common/*" extends="gms.default.svmframe">
+        <put-attribute name="body-content" value="/WEB-INF/views/svm/common/{1}.jsp"/>
+    </definition>
+	
+	<definition name="/common/login/login" extends="gms.default.svmframe">
+		<put-attribute name="body-content" value="/WEB-INF/views/common/login/svmLogin.jsp"/>
+	</definition>
+
+	<definition name="/*/*/*" extends="gms.default.svmframe" preparer="com.sicc.menu.SiccMenuPreparer">
+		<put-attribute name="body-content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+	</definition>
+	
+	<definition name="/*/*/popup/*" extends="exclude">
+		<put-attribute name="body-content" value="/WEB-INF/views/{1}/{2}/popup/{3}.jsp"/>
+	</definition>	
+</tiles-definitions>

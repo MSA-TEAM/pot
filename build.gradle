@@ -21,7 +21,7 @@ apply plugin: "com.palantir.docker"
 
 jar {
     baseName = 'vol'
-    version =  '1.0.2-RELEASE'
+    version =  '1.0.3-RELEASE'
 }
 
 group = 'docker.gsp.sicc.co.kr'
