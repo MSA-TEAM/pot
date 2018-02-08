@@ -66,6 +66,9 @@ $(document).ready(function(){
 	console.log(seq);
 	$(".top_support_menu li.on").removeClass('on');
 	if(seq != -1) $(".top_support_menu li").eq(seq).addClass('on');		
+	
+	// 2018 for SaaS
+	$(".logo").css({"background":"url(<%=logoImage%>)", 'background-repeat' : 'no-repeat', 'background-position':'center center'});
 		
 });
 

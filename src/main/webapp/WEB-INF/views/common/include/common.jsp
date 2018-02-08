@@ -7,6 +7,7 @@
 <%@page import="org.springframework.security.core.Authentication"%>
 <%@page import="kr.co.sicc.gsp.svm.gms.common.login.UserInfo"%>
 <%@page import="kr.co.sicc.gsp.svm.gms.svm.vo.SVMUserVO"%>
+<%@page import="kr.co.sicc.gsp.svm.gms.common.interceptor.BasicInfo"%>
 <%@page import="java.util.regex.Matcher"%>
 <%@page import="java.util.regex.Pattern"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -89,4 +90,17 @@
 	//jhlee date check, gameType check
 // 	String curDate = session.getAttribute("curDate")==null ? "":(String)session.getAttribute("curDate");
 // 	String gameType = session.getAttribute("gameType")==null ? "":(String)session.getAttribute("gameType");
+
+	// 2018 for SaaS
+  	BasicInfo bInfo = (BasicInfo)session.getAttribute("BasicInfo");
+	String tenantID = bInfo.getTenant_id();
+	String aa = bInfo.getFile_path_nm();
+	String bb = bInfo.getImg_file_nm();	
+	System.out.println("common.jsp aa : "+aa);
+	System.out.println("common.jsp bb : "+bb);
+	
+	String logoImage = bInfo.getFile_path_nm() + "/" + bInfo.getImg_file_nm();		
+	System.out.println("common.jsp tenantID : "+tenantID);
+	System.out.println("common.jsp logoImage : "+logoImage);
+	//-- 2018 for SaaS	
 %>

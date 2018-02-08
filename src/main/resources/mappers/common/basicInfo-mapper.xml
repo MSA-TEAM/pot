@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sicc.gsp.svm.gms.common.interceptor.BasicInfoDAO">
+
+  	<select id="BasicInfo" resultType="kr.co.sicc.gsp.svm.gms.common.interceptor.BasicInfo" >
+		/* URL정보로 TENANT, 대회, 엠블럼 정보 가져오기 */
+		SELECT 
+		       A.TENANT_ID 
+		      ,A.CP_CD         
+		      ,A.CP_NM            /*대회명은 TOP 우측에 표기 */      
+		      ,B.FILE_PATH_NM     /*이미지 경로             */ 
+		      ,B.IMG_FILE_NM      /*파일명                  */
+		      /* 다음은 옵션 => 향후 서비스 기간 설정 체크시 사용 */
+		      ,C.SERVICE_URL_ADDR
+		      ,C.SERVICE_CD
+		      ,C.SERVICE_START_DT
+		      ,C.SERVICE_END_DT
+		      ,D.SERVICE_URL_ADDR
+		      ,D.SERVICE_CD
+		      ,D.SERVICE_START_DT
+		      ,D.SERVICE_END_DT
+		  FROM CON.CONCPM A  /* TABLE : 대회정보 */
+		  LEFT OUTER JOIN CON.CONCPIMGM B  /* TABLE : 대회이미지정보 */
+		    ON A.TENANT_ID = B.TENANT_ID
+		   AND A.CP_CD     = B.CP_CD
+		   AND B.IMG_FG_CD ='EM'     /*대회 엠블럼 이미지*/
+		   AND B.SEQ       = 1  /* 대표 이미지 */
+		  LEFT OUTER JOIN CON.CONCPSERVICEM C  /* TABLE : 대회서비스정보 */
+		    ON A.TENANT_ID = C.TENANT_ID
+		   AND A.CP_CD     = C.CP_CD
+		  LEFT OUTER JOIN CON.CONCPSERVICED D  /* TABLE : 대회서비스상세 */
+		    ON C.TENANT_ID = D.TENANT_ID
+		   AND C.CP_CD     = D.CP_CD
+		   AND C.SERVICE_CD= D.SERVICE_CD
+		 WHERE C.SERVICE_URL_ADDR = #{service_url_addr}    /* GETHOST 정보 조건 (EX:  VOL.JAKARTA.GSP.SICC.CO.KR) */
+		    OR D.SERVICE_URL_ADDR = #{service_url_addr}    /* GETHOST 정보 조건 (EX:  VOL.JAKARTA.GSP.SICC.CO.KR) */
+		   LIMIT 1   
+  	</select>  	
+  	 
+</mapper>

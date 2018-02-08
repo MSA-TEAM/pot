@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -37,6 +36,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import kr.co.sicc.gsp.svm.gms.common.interceptor.BasicInfoInterceptor;
 import kr.co.sicc.gsp.svm.gms.common.interceptor.SiccPagePresetInterceptor;
 import kr.co.sicc.gsp.svm.sicc.session.SerializableResourceBundleMessageSource;
 
@@ -72,6 +72,9 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter{
     @Autowired
     SiccPagePresetInterceptor siccPagePresetInterceptor;
     
+    @Autowired
+    BasicInfoInterceptor basicInfoInterceptor;
+    
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
     	
@@ -87,6 +90,8 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter{
         		.excludePathPatterns("/resources/**")        		
         		.excludePathPatterns("/link_files/**");   		
         
+        registry.addInterceptor(basicInfoInterceptor);
+                	
         
         // 다국어 지원
         //registry.addInterceptor(localeChangeInterceptor());
@@ -214,15 +219,8 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter{
 	    rm.setInterceptors(localeChangeInterceptor());
 	    return rm;
     }
-
-
     
-//	  @Override
-//	  public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-//	      // equivalent to <mvc:argument-resolvers>
-//		  argumentResolvers.add(resolver());
-//	  }	  
-//	  
+
 //	  @Override
 //	  public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 //	      // equivalent to <mvc:message-converters>
@@ -242,6 +240,11 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter{
 	@Value("{tomcatAjp.scheme}")
 	String ajpScheme;*/	
 
+//    @Override
+//    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+//    	System.out.println("addArgumentResolvers start >> ");
+//    	argumentResolvers.add(new SiccBasicInfoArgumentResolver());
+//    }    
 
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {

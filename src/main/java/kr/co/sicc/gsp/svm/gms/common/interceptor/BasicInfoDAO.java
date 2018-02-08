@@ -3,7 +3,7 @@ package kr.co.sicc.gsp.svm.gms.common.interceptor;
  * <pre>
  * com.gms.svm.dao
  * BasicInfoDAO.java
- * Description : Tenant정보 등 for basicinfo
+ * Description : Tenant 관련 정보들 
  *
  * History     :
  * </pre>

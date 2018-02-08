@@ -214,8 +214,8 @@ transition:all .2s ease 0s;
 
 /* ▶support 추가(main_support_01)◀ */
 .top_support_01.main_support_01{ background:none; background:url(../images/main_visual_bg_01.jpg) no-repeat center 0px; min-width:1440px;}
-.top_support_01.main_support_01 .top_gnb{background:none; width:1440px; background:url(../images/main_visual_bg_02.png) no-repeat center 0px; height:869px; position:relative;}
-.top_support_01.main_support_01 .top_gnb .logo{ width:155px; height:119px; position:absolute; left:130px;}
+.top_support_01.main_support_01 .top_gnb{background:none; width:1440px;  height:869px; position:relative;}
+.top_support_01.main_support_01 .top_gnb .logo{ width:160px; height:119px; position:absolute; left:130px;}
 .top_support_01.main_support_01 .top_gnb .change_lang{ left:inherit; right:131px;}
 
 
