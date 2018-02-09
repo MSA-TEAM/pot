@@ -48,6 +48,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     	http.headers().xssProtection().block(true);
     	
     	http.authorizeRequests()
+				.antMatchers( "/test").permitAll()
 	    		.antMatchers("/", "/logout", "/login_duplicate", "/access_denied", "/login_fail").permitAll()
 	    		.antMatchers("/getSession", "/messageBundle", SICC_LOGIN_URL, "/saml/acs").permitAll()
 	    		.antMatchers("/*/svm/common", "/*/svm/main", "/*/svm/about", "/*/svm/volunteer").permitAll()
