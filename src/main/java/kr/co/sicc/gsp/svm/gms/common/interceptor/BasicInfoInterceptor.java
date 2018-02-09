@@ -62,7 +62,7 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 					// "pot.trackMeet.gsp.sicc.co.kr"
 					// "pot.swimming.gsp.sicc.co.kr"										
 					
-					String service_url_addr = request.getServerName() + ":" + request.getServerPort();
+					String service_url_addr = request.getServerName();// + ":" + request.getServerPort();
 					//System.out.println("service_url_addr prod .... " + service_url_addr);
 					
 					BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
