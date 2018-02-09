@@ -37,7 +37,7 @@ node {
     stage('Build') {
         try {
             sh './gradlew build dockerPush'
-            archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
+            archiveArtifacts artifacts: '**/build/libs/*.war', fingerprint: true
         } catch(e) {
             mail subject: "Jenkins Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) failed with ${e.message}",
                 to: 'blue.park@kt.com',
