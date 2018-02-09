@@ -22,15 +22,15 @@ apply plugin: "com.palantir.docker"
 
 war {
     baseName = 'vol'
-    version =  '1.0.3-RELEASE'
+    version =  '1.0.4'
 }
 
 group = 'docker.gsp.sicc.co.kr'
 
 docker {	
-	name "${project.group}/${jar.baseName}:${jar.version}"
-	files jar.archivePath
-	buildArgs(['JAR_FILE': "${jar.archiveName}"])
+	name "${project.group}/${war.baseName}:${war.version}"
+	files war.archivePath
+	buildArgs(['WAR_FILE': "${war.archiveName}"])
 }
 
 sourceCompatibility = 1.8
