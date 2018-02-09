@@ -57,6 +57,6 @@ node {
     }
     
     stage('Deploy') {
-        sh 'kubectl apply -f deployment.yaml'
+        sh 'kubectl apply --namespace=development -f deployment.yaml'
     }    
 }
