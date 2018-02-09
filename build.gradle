@@ -17,9 +17,10 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'war'
 apply plugin: "com.palantir.docker"
 
-jar {
+war {
     baseName = 'vol'
     version =  '1.0.3-RELEASE'
 }
@@ -45,7 +46,7 @@ ext {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
-	//compile('org.springframework.cloud:spring-cloud-starter-config')
+	compile('org.springframework.cloud:spring-cloud-starter-config')
 	//compile('org.springframework.cloud:spring-cloud-starter-eureka')
 	compile("org.springframework.boot:spring-boot-starter-security") // for security
 	compile group: 'org.springframework.security', name: 'spring-security-taglibs' // for common.jsp
@@ -54,10 +55,10 @@ dependencies {
 	compile('com.sun.mail:javax.mail')  // for mail	
 	compile('org.apache.commons:commons-lang3:3.4') // for StringUtils
 
-//	compile('org.springframework.boot:spring-boot-devtools') // for jsp auto reload
+	//compile('org.springframework.boot:spring-boot-devtools') // for jsp auto reload
 	
 	compile fileTree(dir: 'libs', include: '*.jar') // for sicc jar
-	compile fileTree(dir: 'libs', include: ['*.jar'])
+	//compile fileTree(dir: 'libs', include: ['*.jar'])
 
 	compile('javax.servlet:jstl:1.2')  // jsp
 	compile('org.apache.tiles:tiles-jsp:3.0.4') // tiles

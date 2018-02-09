@@ -2,10 +2,11 @@ package kr.co.sicc.gsp.svm;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
 //@EnableEurekaClient
-public class SvmApplication {
+public class SvmApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SvmApplication.class, args);

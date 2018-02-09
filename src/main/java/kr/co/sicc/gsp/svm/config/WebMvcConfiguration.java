@@ -157,7 +157,7 @@ public class WebMvcConfiguration extends WebMvcConfigurerAdapter{
     public ViewResolver internalResourceViewResolver() {
         InternalResourceViewResolver bean = new InternalResourceViewResolver();
         bean.setViewClass(JstlView.class);
-        bean.setPrefix("/WEB-INF/views");
+        bean.setPrefix("/WEB-INF/views/");
         bean.setSuffix(".jsp");
         bean.setContentType("text/html; charset=UTF-8");
         bean.setOrder(2); // internalResourceViewResolver를 2순위로 둔다. 
