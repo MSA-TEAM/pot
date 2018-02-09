@@ -22,7 +22,7 @@ apply plugin: "com.palantir.docker"
 
 war {
     baseName = 'vol'
-    version =  '1.0.4'
+    version =  '1.0.5'
 }
 
 group = 'docker.gsp.sicc.co.kr'
