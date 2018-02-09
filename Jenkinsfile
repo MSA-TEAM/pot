@@ -31,15 +31,26 @@ node {
     }
 
     stage('Test') {
-        sh './gradlew check || true'
+        sh './gradlew test || true'
     }
 
     stage('Build') {
         try {
-            sh './gradlew clean build dockerPush'
+            sh './gradlew clean build'
             archiveArtifacts artifacts: '**/build/libs/*.war', fingerprint: true
         } catch(e) {
             mail subject: "Jenkins Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) failed with ${e.message}",
+                to: 'mjskyroom@sicc.co.kr',
+                body: "Please go to $env.BUILD_URL."
+        }
+    }
+
+    stage('Push') {
+        try {
+            sh './gradlew dockerPush'
+            archiveArtifacts artifacts: '**/build/libs/*.war', fingerprint: true
+        } catch(e) {
+            mail subject: "Jenkins Job '${env.JOB_NAME}' (${env.BUILD_NUMBER}) Push failed with ${e.message}",
                 to: 'mjskyroom@sicc.co.kr',
                 body: "Please go to $env.BUILD_URL."
         }
