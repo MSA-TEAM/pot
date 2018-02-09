@@ -35,13 +35,13 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 			
 			// BasicInfo 없을경우에만 DB조회
 			if((BasicInfo)session.getAttribute("BasicInfo") == null) {				
-
+				BasicInfo bInfo = new BasicInfo();
+				
 				//  for local TEST 
 				if(request.getServerName().equals("localhost")) {
 					String service_url_addr = request.getServerName() + ":" + request.getServerPort();
 					//System.out.println("service_url_addr local .... " + service_url_addr);
 					
-					BasicInfo bInfo = new BasicInfo();
 					if(service_url_addr.equals("localhost:8090")) {
 						bInfo.setTenant_id("JAKARTA");
 						bInfo.setFile_path_nm("/images");
@@ -51,9 +51,6 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 						bInfo.setFile_path_nm("/images");
 						bInfo.setImg_file_nm("top_logo_02.gif");
 					}
-					
-					//System.out.println("tenantID local: "+bInfo.getTenant_id());
-					session.setAttribute("BasicInfo", bInfo);
 				
 				// for prod
 				} else {
@@ -62,15 +59,15 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 					// "pot.trackMeet.gsp.sicc.co.kr"
 					// "pot.swimming.gsp.sicc.co.kr"										
 					
-					String service_url_addr = request.getServerName();// + ":" + request.getServerPort();
+					String service_url_addr = request.getServerName();
 					//System.out.println("service_url_addr prod .... " + service_url_addr);
 					
 					BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
-					BasicInfo bInfo = mapper.BasicInfo(service_url_addr);  
+					bInfo = mapper.BasicInfo(service_url_addr);  
 					
-					//System.out.println("tenantID prod: "+bInfo.getTenant_id());					
-					session.setAttribute("BasicInfo", bInfo);					
-				}				
+				}
+				//System.out.println("tenantID prod: "+bInfo.getTenant_id());
+				session.setAttribute("BasicInfo", bInfo);	
 			}  
 						
 			// 로긴 정보의 tenantId와 비교해서 basicInfo의 로긴 정보의 tenantID정보로 셋팅 
