@@ -30,7 +30,7 @@ war {
 //		}
 //	}
     baseName = 'vol'
-    version =  '1.0.12'
+    version =  '1.0.13'
 }
  
 group = 'docker.gsp.sicc.co.kr'
@@ -52,7 +52,7 @@ configurations {
 }
 
 ext {
-	springCloudVersion = 'Edgware.SR1'
+	springCloudVersion = 'Edgware.SR2'
 }
 
 dependencies {
