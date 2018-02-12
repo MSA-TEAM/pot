@@ -8,9 +8,9 @@ spec:
     app: gsp-vol
   ports:
   - protocol: TCP
-    port: 8090
+    port: 8080
     nodePort: 30100
-    targetPort: 8090
+    targetPort: 8080
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -27,11 +27,11 @@ spec:
     metadata:
       labels:
         app: gsp-vol
-        version: "1.0.7"
+        version: "1.0.8"
     spec:
       containers:
       - name: gsp-vol
-        image: docker.gsp.sicc.co.kr/vol:1.0.7
+        image: docker.gsp.sicc.co.kr/vol:1.0.8
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: prd
@@ -39,4 +39,4 @@ spec:
           value: http://100.70.69.238:8888
         ports:
         - name: http
-          containerPort: 8090
+          containerPort: 8080

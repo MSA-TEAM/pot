@@ -93,8 +93,12 @@
 
 	// 2018 for SaaS
   	BasicInfo bInfo = (BasicInfo)session.getAttribute("BasicInfo");
-	String tenantID = bInfo.getTenant_id();	
-	String logoImage = bInfo.getFile_path_nm() + "/" + bInfo.getImg_file_nm();		
+	String tenantID = "";
+	String logoImage = "";
+	if(bInfo != null){
+		tenantID = bInfo.getTenant_id();	
+		logoImage = bInfo.getFile_path_nm() + "/" + bInfo.getImg_file_nm();
+	}
 // 	System.out.println("common.jsp tenantID : "+tenantID);
 // 	System.out.println("common.jsp logoImage : "+logoImage);
 	//-- 2018 for SaaS	

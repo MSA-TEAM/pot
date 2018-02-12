@@ -36,21 +36,21 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 			// BasicInfo 없을경우에만 DB조회
 			if((BasicInfo)session.getAttribute("BasicInfo") == null) {				
 				BasicInfo bInfo = new BasicInfo();
-				
+			
 				//  for local TEST 
-				if(request.getServerName().equals("localhost")) {
+				if(request.getServerName().equals("localhost") || request.getServerName().equals("192.168.99.100") ) { // http://192.168.99.100:8080/ : docker 
 					String service_url_addr = request.getServerName() + ":" + request.getServerPort();
 					//System.out.println("service_url_addr local .... " + service_url_addr);
 					
-					if(service_url_addr.equals("localhost:8090")) {
+					if(service_url_addr.equals("localhost:8080")) {
 						bInfo.setTenant_id("JAKARTA");
 						bInfo.setFile_path_nm("/images");
 						bInfo.setImg_file_nm("top_logo_01.png");
 					} else {
 						bInfo.setTenant_id("SICC");
 						bInfo.setFile_path_nm("/images");
-						bInfo.setImg_file_nm("top_logo_02.gif");
-					}
+						bInfo.setImg_file_nm("top_logo_02.png");
+					}					
 				
 				// for prod
 				} else {
@@ -60,13 +60,12 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 					// "pot.swimming.gsp.sicc.co.kr"										
 					
 					String service_url_addr = request.getServerName();
-					//System.out.println("service_url_addr prod .... " + service_url_addr);
+					System.out.println("service_url_addr prod .... " + service_url_addr);
 					
 					BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
 					bInfo = mapper.BasicInfo(service_url_addr);  
-					
-				}
-				//System.out.println("tenantID prod: "+bInfo.getTenant_id());
+					System.out.println("tenantID prod: "+bInfo.getTenant_id());
+				}				
 				session.setAttribute("BasicInfo", bInfo);	
 			}  
 						
