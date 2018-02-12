@@ -30,7 +30,7 @@ war {
 //		}
 //	}
     baseName = 'vol'
-    version =  '1.0.13'
+    version =  '1.0.14'
 }
  
 group = 'docker.gsp.sicc.co.kr'

@@ -95,11 +95,15 @@
   	BasicInfo bInfo = (BasicInfo)session.getAttribute("BasicInfo");
 	String tenantID = "";
 	String logoImage = "";
+	String cpCd = "";
+	String cpNm = "";
 	if(bInfo != null){
 		tenantID = bInfo.getTenant_id();	
 		logoImage = bInfo.getFile_path_nm() + "/" + bInfo.getImg_file_nm();
+		cpCd = bInfo.getCp_cd();	
+		cpNm = bInfo.getCp_nm();
 	}
-// 	System.out.println("common.jsp tenantID : "+tenantID);
-// 	System.out.println("common.jsp logoImage : "+logoImage);
+//  	System.out.println("common.jsp tenantID : "+tenantID);
+//  	System.out.println("common.jsp logoImage : "+logoImage);
 	//-- 2018 for SaaS	
 %>

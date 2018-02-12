@@ -183,9 +183,14 @@ $(document).ready(function(){
 	//application
 	function funApplication(){
 		var frm = document.frm;
+		
+		// 2018 for SaaS
+		alert("TENANT_ID : "+'<%=tenantID%>'+", CP_CD : "+'<%=cpCd%>'+", CP_NM : "+'<%=cpNm%>');
+		
 		var url = '<%=contextLangPath%>/svm/application/application';
 		frm.action = url;
-		location.href = getQueryStringUrl(frm, url);
+		location.href = getQueryStringUrl(frm, url);		
+		
 	}
 
 	//]]>
