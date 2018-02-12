@@ -32,7 +32,7 @@ war {
     baseName = 'vol'
     version =  '1.0.12'
 }
-
+ 
 group = 'docker.gsp.sicc.co.kr'
 
 sourceCompatibility = 1.8
@@ -63,7 +63,7 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-security") // for security
 	compile group: 'org.springframework.security', name: 'spring-security-taglibs' // for common.jsp
 	compile('org.springframework.boot:spring-boot-configuration-processor')   // for multipart
-	compile('org.springframework:spring-context-support')  // for mail 
+	compile('org.springframework:spring-context-support')  // for mail .
 	compile('com.sun.mail:javax.mail')  // for mail	
 	compile('org.apache.commons:commons-lang3:3.4') // for StringUtils
 
