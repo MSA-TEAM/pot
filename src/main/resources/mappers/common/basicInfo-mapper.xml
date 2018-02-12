@@ -26,7 +26,7 @@
 		    ON A.TENANT_ID = B.TENANT_ID
 		   AND A.CP_CD     = B.CP_CD
 		   AND B.IMG_FG_CD ='EM'     /*대회 엠블럼 이미지*/
-		   AND B.SEQ       = 1  /* 대표 이미지 */
+		   --AND B.SEQ       = 1  /* 대표 이미지 */
 		  LEFT OUTER JOIN CON.CONCPSERVICEM C  /* TABLE : 대회서비스정보 */
 		    ON A.TENANT_ID = C.TENANT_ID
 		   AND A.CP_CD     = C.CP_CD

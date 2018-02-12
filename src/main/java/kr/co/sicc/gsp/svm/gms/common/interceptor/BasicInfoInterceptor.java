@@ -38,7 +38,7 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 				BasicInfo bInfo = new BasicInfo();
 			
 				//  for local TEST 
-				if(request.getServerName().equals("localhost") || request.getServerName().equals("192.168.99.100") ) { // http://192.168.99.100:8080/ : docker 
+				if(request.getServerName().equals("localhost")) { 
 					String service_url_addr = request.getServerName() + ":" + request.getServerPort();
 					//System.out.println("service_url_addr local .... " + service_url_addr);
 					
