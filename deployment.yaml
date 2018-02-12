@@ -34,9 +34,9 @@ spec:
         image: docker.gsp.sicc.co.kr/vol:1.0.8
         env:
         - name: SPRING_PROFILES_ACTIVE
-          value: prd
+          value: dev
         - name: spring.cloud.config.uri
-          value: http://100.70.69.238:8888
+          value: http://100.102.123.206:8888
         ports:
         - name: http
           containerPort: 8080
