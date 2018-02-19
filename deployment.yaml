@@ -27,11 +27,11 @@ spec:
     metadata:
       labels:
         app: gsp-acr
-        version: "1.0.1"
+        version: "1.0.2"
     spec:
       containers:
       - name: gsp-acr
-        image: docker.gsp.sicc.co.kr/acr:1.0.1
+        image: docker.gsp.sicc.co.kr/acr:1.0.2
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: dev
