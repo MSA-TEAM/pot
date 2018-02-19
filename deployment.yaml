@@ -1,37 +1,37 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: gsp-vol-service
+  name: gsp-acr-service
 spec:
   type: NodePort
   selector:
-    app: gsp-vol
+    app: gsp-acr
   ports:
   - protocol: TCP
     port: 8080
-    nodePort: 30100
+    nodePort: 30700
     targetPort: 8080
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: gsp-vol
+  name: gsp-acr
   labels:
-    app: gsp-vol
+    app: gsp-acr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gsp-vol
+      app: gsp-acr
   template:
     metadata:
       labels:
-        app: gsp-vol
-        version: "1.0.14"
+        app: gsp-acr
+        version: "1.0.1"
     spec:
       containers:
-      - name: gsp-vol
-        image: docker.gsp.sicc.co.kr/vol:1.0.14
+      - name: gsp-acr
+        image: docker.gsp.sicc.co.kr/acr:1.0.1
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: dev

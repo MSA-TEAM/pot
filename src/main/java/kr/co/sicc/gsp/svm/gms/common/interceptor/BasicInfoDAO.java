@@ -1,4 +1,9 @@
 package kr.co.sicc.gsp.svm.gms.common.interceptor;
+
+import java.util.List;
+
+import kr.co.sicc.gsp.svm.sicc.exception.SiccException;
+
 /**
  * <pre>
  * com.gms.svm.dao
@@ -15,6 +20,6 @@ package kr.co.sicc.gsp.svm.gms.common.interceptor;
  */
 public interface BasicInfoDAO {
 	
-	public BasicInfo BasicInfo(String service_url_addr);	
-	
+	public List<BasicInfo> BasicInfo(String service_url_addr) throws SiccException;
+		
 }	

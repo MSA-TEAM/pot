@@ -29,8 +29,8 @@ war {
 //			}
 //		}
 //	}
-    baseName = 'vol'
-    version =  '1.0.14'
+    baseName = 'acr'
+    version =  '1.0.1'
 }
  
 group = 'docker.gsp.sicc.co.kr'

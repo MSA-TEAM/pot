@@ -20,7 +20,7 @@ node {
                     [key: 'headerWithString', regexpFilter: '']
                 ],
                 regexpFilterText: '$repository/$reference',
-                regexpFilterExpression: 'GMS/vol/refs/heads/master'  // Git에 있는 조직그룹/저장소명 (GMS/vol)
+                regexpFilterExpression: 'GMS/acr/refs/heads/master'  // Git에 있는 조직그룹/저장소명 (GMS/acr)
             ]
         ])
     ])

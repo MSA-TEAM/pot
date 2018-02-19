@@ -28,17 +28,17 @@
 		<put-attribute name="body-content" value="" /> 
 	</definition>
 
-	<definition name="/svm/common/*" extends="gms.default.svmframe">
-        <put-attribute name="body-content" value="/WEB-INF/views/svm/common/{1}.jsp"/>
-    </definition>
+<!-- 	<definition name="/svm/common/*" extends="gms.default.svmframe"> -->
+<!--         <put-attribute name="body-content" value="/WEB-INF/views/svm/common/{1}.jsp"/> -->
+<!--     </definition> -->
 	
 	<definition name="/common/login/login" extends="gms.default.svmframe">
 		<put-attribute name="body-content" value="/WEB-INF/views/common/login/svmLogin.jsp"/>
 	</definition>
 
-	<definition name="/*/*/*" extends="gms.default.svmframe" preparer="com.sicc.menu.SiccMenuPreparer">
-		<put-attribute name="body-content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
-	</definition>
+<!-- 	<definition name="/*/*/*" extends="gms.default.svmframe" preparer="com.sicc.menu.SiccMenuPreparer"> -->
+<!-- 		<put-attribute name="body-content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/> -->
+<!-- 	</definition> -->
 	
 	<definition name="/*/*/popup/*" extends="exclude">
 		<put-attribute name="body-content" value="/WEB-INF/views/{1}/{2}/popup/{3}.jsp"/>
