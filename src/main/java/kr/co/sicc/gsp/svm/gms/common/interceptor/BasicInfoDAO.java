@@ -20,6 +20,10 @@ import kr.co.sicc.gsp.svm.sicc.exception.SiccException;
  */
 public interface BasicInfoDAO {
 	
-	public List<BasicInfo> BasicInfo(String service_url_addr) throws SiccException;
-		
+	/* tenant 정보 가져오기*/
+	public BasicInfo TenantInfo(String service_url_addr) throws SiccException;	
+	
+	/* 사용 서비스 시스템 정보 가져오기 */
+	public List<BasicInfo> ServiceInfo(String tenantId) throws SiccException;
+	
 }	

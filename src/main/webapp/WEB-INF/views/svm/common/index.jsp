@@ -9,15 +9,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%
 	// 2018 for SaaS
-	List<BasicInfo> basicList = (ArrayList)session.getAttribute("BasicInfoList");
-	String logoImage = "";
-	for(BasicInfo info:basicList) {
-		logoImage = info.getFile_path_nm() + "/" + info.getImg_file_nm();
-// 		System.out.println("### info.getTenant_id() : " + info.getTenant_id());
-// 		System.out.println("### info.getService_url_addr() : " + info.getService_url_addr());
-// 		System.out.println("### info.getFile_path_nm() : " + info.getFile_path_nm() + "/" + info.getImg_file_nm());
-	}	
-	 
+	BasicInfo tInfo = (BasicInfo)session.getAttribute("TenantInfo");
+	List<BasicInfo> serviceList = (ArrayList)session.getAttribute("ServiceInfoList");
+			
+	String logoImage = "";		
+	if(tInfo != null){			
+		logoImage = tInfo.getFile_path_nm() + "/" + tInfo.getImg_file_nm();
+	}	 
 	// 2018 for SaaS	
 %>
 <!doctype html>
@@ -44,7 +42,7 @@
 
 <script> 
 	$(document).ready(function() {		
-		var list_size = <%=basicList.size()%>; 
+		var list_size = <%=serviceList.size()%>; 
 		//var menu_len = $(".main_menu").find("li").length;
 		$(".main_menu").find("li").hide();
 		
@@ -79,10 +77,10 @@
 <!-- 					<img src="/images/main_txt_01.png" alt="18TH ASIAN GAMES Jakarta Palembang 2018"> -->
 <!-- 				</div> -->
 				
-				<c:set var="basicList" value="<%=basicList%>"></c:set>
+				<c:set var="basicList" value="<%=serviceList%>"></c:set>
 				<ul class="main_menu">		
 					<c:forEach items="${basicList}" var="item" varStatus="status">		
-						<li class="m_0${status.index+1}" ><a href="http://${item.getService_url_addr()}">${item.getSystem_cd()} Management</a></li>
+						<li class="m_0${status.index+1}" ><a href="http://${item.getService_url_addr()}">${item.getCode_nm1()}<br/>Management</a></li>
 					</c:forEach>
 <!-- 					<li class="m_01" ><a href="#void" id="10180">Accreditation Management</a></li> -->
 <!-- 					<li class="m_02" ><a href="#void" id="11280">Staff, Volunteer Management </a></li> -->

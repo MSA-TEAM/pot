@@ -39,63 +39,49 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 			
 			// BasicInfo 없을경우에만 DB조회
 			if((BasicInfo)session.getAttribute("BasicInfo") == null) {				
-
-				String service_url_addr = new String();	
-				
 				//  for local TEST 
-				if(request.getServerName().equals("localhost")) {
-					try{
+				if(request.getServerName().equals("localhost")) {					
+					try{						
+						String service_url_addr = request.getServerName();	
+						
 						//service_url_addr = request.getServerName();	
 						service_url_addr = "pot.jakarta.gsp.sicc.co.kr";						
 						//service_url_addr = "pot.trackmeet.gsp.sicc.co.kr";						
 						//service_url_addr = "pot.swimming.gsp.sicc.co.kr";						
 						
-						BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
-						List<BasicInfo> list = mapper.BasicInfo(service_url_addr);
-					
-						System.out.println("bInfo.size() : " + list.size());
-						session.setAttribute("BasicInfoList", list);
+						BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);						
+						
+						// 1. URL정보로 TENANT, 대회, 엠블럼 정보 가져오기 
+						BasicInfo bInfo = new BasicInfo();			
+						bInfo = mapper.TenantInfo(service_url_addr);
+								
+						// 2. 사용 서비스 시스템 정보 가져오기 
+						List<BasicInfo> list = mapper.ServiceInfo(bInfo.getTenant_id());
+						
+						session.setAttribute("TenantInfo", bInfo); // 테넌트 정보
+						session.setAttribute("ServiceInfoList", list); // 사용 서비스 정보 
 						
 					}catch(DataAccessException e){
 						throw SiccMessageUtil.getError(e);
 					}catch(ClassCastException e){
 						throw SiccMessageUtil.getError(e);
-					}	
-					
-// for local test					
-//					String service_url_addr = request.getServerName() + ":" + request.getServerPort();
-//					System.out.println("service_url_addr local .... " + service_url_addr);
-					
-//					List<BasicInfo> list = new ArrayList<BasicInfo>();
-//					
-//					BasicInfo bInfo = new BasicInfo();					
-//					bInfo.setTenant_id("20180220");
-//					bInfo.setService_url_addr("vol.jakarta.gsp.sicc.co.kr1");
-//					list.add(bInfo);
-//
-//					BasicInfo bInfo1 = new BasicInfo();	
-//					bInfo1.setTenant_id("20180221");
-//					bInfo1.setService_url_addr("pot.jakarta.gsp.sicc.co.kr2");
-//					list.add(bInfo1);
-//					
-//					System.out.println("bInfo.size() : " + list.size());
-//					for(BasicInfo info:list) {
-//						System.out.println("info.getTenant_id() : " + info.getTenant_id());
-//						System.out.println("info.getService_url_addr() : " + info.getService_url_addr());
-//					}						
-//					session.setAttribute("BasicInfoList", list);
+					}
 	
 				// for prod
 				} else {
 					try{
-						service_url_addr = request.getServerName();	
-						//System.out.println("service_url_addr prod .... " + service_url_addr);
+						String service_url_addr = request.getServerName();
+						BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);						
 						
-						BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
-						List<BasicInfo> list = mapper.BasicInfo(service_url_addr);
+						// 1. URL정보로 TENANT, 대회, 엠블럼 정보 가져오기 
+						BasicInfo bInfo = new BasicInfo();			
+						bInfo = mapper.TenantInfo(service_url_addr);
+								
+						// 2. 사용 서비스 시스템 정보 가져오기 
+						List<BasicInfo> list = mapper.ServiceInfo(bInfo.getTenant_id());
 						
-						System.out.println("bInfo.size() : " + list.size());
-						session.setAttribute("BasicInfoList", list);
+						session.setAttribute("TenantInfo", bInfo); // 테넌트 정보
+						session.setAttribute("ServiceInfoList", list); // 사용 서비스 정보 
 						
 					}catch(DataAccessException e){
 						throw SiccMessageUtil.getError(e);
