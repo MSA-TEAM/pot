@@ -39,14 +39,20 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 			
 			// BasicInfo 없을경우에만 DB조회
 			if((BasicInfo)session.getAttribute("BasicInfo") == null) {				
+
+				String service_url_addr = new String();	
+				
 				//  for local TEST 
 				if(request.getServerName().equals("localhost")) {
 					try{
-						String service_url_addr = request.getServerName();	
+						//service_url_addr = request.getServerName();	
 						service_url_addr = "pot.jakarta.gsp.sicc.co.kr";						
+						//service_url_addr = "pot.trackmeet.gsp.sicc.co.kr";						
+						//service_url_addr = "pot.swimming.gsp.sicc.co.kr";						
+						
 						BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
 						List<BasicInfo> list = mapper.BasicInfo(service_url_addr);
-						
+					
 						System.out.println("bInfo.size() : " + list.size());
 						session.setAttribute("BasicInfoList", list);
 						
@@ -82,8 +88,8 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 				// for prod
 				} else {
 					try{
-						String service_url_addr = request.getServerName();	
-						System.out.println("service_url_addr prod .... " + service_url_addr);
+						service_url_addr = request.getServerName();	
+						//System.out.println("service_url_addr prod .... " + service_url_addr);
 						
 						BasicInfoDAO mapper = sql_session.getMapper(BasicInfoDAO.class);
 						List<BasicInfo> list = mapper.BasicInfo(service_url_addr);
