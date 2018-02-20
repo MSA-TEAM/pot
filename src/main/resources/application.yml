@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ACR
+    name: POT
   devtools:
     livereload:
       enabled: true  # for jsp auto reload
