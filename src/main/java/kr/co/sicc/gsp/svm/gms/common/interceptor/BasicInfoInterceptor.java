@@ -56,7 +56,9 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 						bInfo = mapper.TenantInfo(service_url_addr);
 								
 						// 2. 사용 서비스 시스템 정보 가져오기 
-						List<BasicInfo> list = mapper.ServiceInfo(bInfo.getTenant_id());
+						String tenant_id = bInfo.getTenant_id();
+						String cp_cd = bInfo.getCp_cd();
+						List<BasicInfo> list = mapper.ServiceInfo(tenant_id, cp_cd);
 						
 						session.setAttribute("TenantInfo", bInfo); // 테넌트 정보
 						session.setAttribute("ServiceInfoList", list); // 사용 서비스 정보 
@@ -78,7 +80,9 @@ public class BasicInfoInterceptor extends HandlerInterceptorAdapter{
 						bInfo = mapper.TenantInfo(service_url_addr);
 								
 						// 2. 사용 서비스 시스템 정보 가져오기 
-						List<BasicInfo> list = mapper.ServiceInfo(bInfo.getTenant_id());
+						String tenant_id = bInfo.getTenant_id();
+						String cp_cd = bInfo.getCp_cd();
+						List<BasicInfo> list = mapper.ServiceInfo(tenant_id, cp_cd);
 						
 						session.setAttribute("TenantInfo", bInfo); // 테넌트 정보
 						session.setAttribute("ServiceInfoList", list); // 사용 서비스 정보 

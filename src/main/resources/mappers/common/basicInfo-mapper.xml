@@ -48,7 +48,8 @@
 		     AND B.SYSTEM_CD = C.MINOR_CD 
 		    -- AND C.HIDE_YN ='N'          -- 향후 감추기 조건 걸어주어야 함  
 		    -- AND C.CODE_IDX4 ='Y'  -- 향후 사용 서비스 조건 걸어주어야 함
-		    WHERE A.TENANT_ID = #{TENANT_ID}    /* GETHOST 정보 조건 (EX:  2018000000) */
+		    WHERE A.TENANT_ID = #{tenant_id}    /* GETHOST 정보 조건 (EX:  2018000000) */
+		     AND A.CP_CD = #{cp_cd}
 	]]>		    
   	</select>  	
   	  	 

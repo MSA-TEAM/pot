@@ -2,6 +2,8 @@ package kr.co.sicc.gsp.svm.gms.common.interceptor;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import kr.co.sicc.gsp.svm.sicc.exception.SiccException;
 
 /**
@@ -24,6 +26,6 @@ public interface BasicInfoDAO {
 	public BasicInfo TenantInfo(String service_url_addr) throws SiccException;	
 	
 	/* 사용 서비스 시스템 정보 가져오기 */
-	public List<BasicInfo> ServiceInfo(String tenantId) throws SiccException;
+	public List<BasicInfo> ServiceInfo(@Param("tenant_id") String tenant_id, @Param("cp_cd") String cp_cd) throws SiccException;
 	
 }	
