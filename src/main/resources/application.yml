@@ -17,6 +17,20 @@ spring:
     url: jdbc:postgresql://sport-saas-psql.cf37vedvxld3.ap-northeast-2.rds.amazonaws.com:5432/sportsaas?autoReconnect=true&useSSL=false
     username: gms_svm
     password: new1234!
+    tomcat:
+      min-idle: 5
+      max-idle: 20
+      max-active: 40
+      validation-query: select 0;
+      test-on-borrow: true
+      test-on-connect: true
+      test-on-return: true
+      test-while-idle: true
+      min-evictable-idle-time-millis: 60000
+      time-between-eviction-runs-millis: 10000
+      remove-abandoned: true
+      remove-abandoned-timeout: 1800
+      log-abandoned: true    
 eureka:
   client:
     registerWithEureka: true
