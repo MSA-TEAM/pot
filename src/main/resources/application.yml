@@ -16,10 +16,7 @@ spring:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://sport-saas-psql.cf37vedvxld3.ap-northeast-2.rds.amazonaws.com:5432/sportsaas?autoReconnect=true&useSSL=false
     username: gms_svm
-    password: new1234!
-    test-on-borrow: true
-    remove-abandoned: true
-	validation-query: SELECT 1;    
+    password: new1234!     
 eureka:
   client:
     registerWithEureka: true
